@@ -545,7 +545,9 @@ string other than the single `GPTBot` line that the principal attributes to his 
 window holds only four self-declared user-agent strings in total (the monitor, two `curl` calls,
 and one browser). The eleven other agent names occur nowhere in the file. The claim is bounded the
 way every claim in this record is: a user-agent string is self-declared, and all 42 entries share
-one masked `/16`, so the bytes alone cannot separate a local test from a remote crawler. In the same window: 38 of 42 requests
+one masked `/16`, so the bytes alone cannot separate a local test from a remote crawler.
+
+**What else the window held:** 38 of 42 requests
 are the site's own monitor (declared with `--self` for this reading), 2 are the operator's `curl`
 calls — one of them carrying the spoofed `GPTBot` string — and 1 is a browser. `/robots.txt` was
 requested by nobody. `/llms.txt` was requested twice, both times by the operator's own tests. The
