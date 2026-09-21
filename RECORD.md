@@ -1,55 +1,56 @@
 ---
 format: perspicuity-work/1
 id: at-project
-revision: 3
+revision: 4
 skill_version: 0.5.0
 updated: 2026-09-21
 created_at: "2026-09-21T11:48:05-06:00"
-updated_at: "2026-09-21T12:12:00-06:00"
+updated_at: "2026-09-21T12:34:00-06:00"
 record_status: open
-work_status: waiting
+work_status: active
 ---
 
 # Agenttrace
 
-<!-- The project record and the project's Statement of Work (revision 3). Revision 1 — the
-     frame, objectives, material conditions and the Run-era U1 grant — is preserved in commit
-     652a38d; read it beside this revision rather than instead of it. Keep "## Current
-     position" and its labels: the dashboard reads them and `make records` fails without
-     Work scope, Next and (for waiting work) Dependency. -->
+<!-- The project record and the project's Statement of Work (revision 3), now carrying the
+     grant and the units it authorised (revision 4). Revision 1 — the frame, objectives,
+     material conditions and the Run-era U1 grant — is preserved in commit 652a38d; read it
+     beside this revision rather than instead of it. Keep "## Current position" and its labels:
+     the dashboard reads them and `make records` fails without Work scope and Next. -->
 
 ## Current position
 
 Principal and decider: David — owns the objectives and the ratification. Retains spending, outbound messages, external agreements, the release word for publication, any new dependency, and every decision about a host's configuration and what it stores.
 
-Work owner: Quill (coordinator). No worker has been delegated any part of this plan yet; a reviewer would be named here or in the unit's grant before any assignment.
+Work owner: Quill (coordinator). Rook is named as the W1 reviewer, not the author.
 
-Mode: `Plan` — set by the principal on 2026-09-21. The deliverable is this Statement of Work, and the run stops when the plan is registered and the grant is requested; nothing is implemented and no code is committed under it. Earlier mode: `Run`, from 2026-09-21T11:52:40-06:00 to 11:59:00-06:00, under which the tool was built and committed at `c040601`. The mode change supersedes that grant, so the tool is treated below as an input to the comparison rather than as progress under this plan.
+Mode: `Run` — the principal ratified B1-amended and granted W1–W4 on 2026-09-21, so the record carries the granted units through to their returns and stops there. Earlier mode: `Plan`, from 2026-09-21T12:02:00-06:00 until this grant, which registered the Statement of Work (revision 3) and stopped at the requested grant. Earlier still: `Run`, 11:52:40–11:59:00-06:00, under which the tool was built ahead of the plan and committed at `c040601`.
 
-Decision: `recommended` — the recommended course is B1-amended: keep the existing tool, add the format-drift diagnostics (W2), and verify it against a real log (W3) before any claim about a host is made. Quill recommends; **David ratifies**; no selection is recorded. Basis: revision 3 of this record.
+Decision: `selected` — David ratified the recommended course B1-amended and granted units W1–W4 on 2026-09-21T12:33:00-06:00, on the basis of revision 3 of this record. The selection is his; the recommendation was Quill's; nothing outside the granted scope is authorised.
 
-Work scope: this Statement of Work — the frame, the comparison of complete courses of action, the recommended course, units W1–W4 with their done-when and estimates, the fences, the open questions, the review criteria, and the grant requested. Picking up any unit is outside this revision's authority.
+Work scope: units W1–W4 as registered in revision 3 — W1 an independent review of the artefact, W2 format-drift diagnostics and the unrecognised-format policy, W3 verification against a real access log, W4 the first real-host finding — plus restoring the real project checks in `scripts/check-project.sh`, which the propagated process documents replaced with a deliberately failing stub.
 
-Work: none under this plan. It was written against what exists: the tool committed at `c040601`, the uncommitted documentation drafts listed in Act, and the measurements those artefacts provide. No unit has been picked up, and no claim in this plan rests on work this plan authorised.
+Work: the grant is recorded in Act, with the reviewer named and the frozen hashes. W1 is picked up (Rook, not the author); W2 is granted and follows W1's return; W3 and W4 are granted and blocked, because the host now writes a log but no copy is reachable from this environment (C12).
 
-Outcome: unknown, deliberately. No host has been confirmed to write an access log, so the question this project exists to answer — is any named AI agent, and `/llms.txt` in particular, being requested? — has no evidence behind it at all. Nothing in this repository changes that.
+Outcome: unknown — no real log has been read here yet. The input now exists on the host and the host's config masks the address at write time (C13), but nothing about a host may be claimed until W3 reproduces the counts by hand.
 
-Next: David — ratify this Statement of Work or name corrections, and answer Q1 (whether `findmynextbite.food` will write an access log, and with which address handling).
+Next: Quill — assess Rook's W1 return, then carry W2 to its return.
 
-Blocked: the plan's execution. No unit may be picked up before the principal ratifies this Statement of Work; W3 and W4 additionally need a written access log that does not exist anywhere this plan can reach.
+Waiting on: David — a readable copy of a window of the host's access log in this environment, which is what W3 and W4 need.
 
-Waiting on: David.
+Blocked: W3 and W4. The log is written on the host at `/var/log/caddy/findmynextbite-access.log`, mode 0640, group `caddy`; this machine has no `/var/log/caddy`, no `caddy` binary, and `david` is not in the `caddy` group, and this session can neither use sudo nor fetch from the host (C12). W1 and W2 are not blocked.
 
-Dependency: David's reply ratifies the plan and unblocks W1 and W2; a written access log on `findmynextbite.food` unblocks W3 and W4. Nothing outside this repository is needed for W1 or W2.
+Dependency: a copy of the log placed in the workspace (or the tool run on the host, with its output returned) unblocks W3 and W4. Nothing else outside this repository is needed.
 
-Authority: the principal's brief to Quill of 2026-09-21 (Run grant, since superseded) and his mode change of the same day. This revision requests a new grant; until it is ratified, Quill holds authority only to maintain this record and to answer questions about work already committed.
+Authority: the principal's ratification and grant of 2026-09-21, recorded in Act; his Statement of Work request of the same day (revision 3); and his brief of the same day (revision 1). David retains publication (Q4 answered: not in scope), spending, outbound messages, external agreements, dependencies, and any further change to a host's configuration.
 
 | Stage | began_at | registered_at / exact basis revision | finished_at |
 | --- | --- | --- | --- |
 | Frame and Decide (Run) | 2026-09-21T11:49:00-06:00 | 2026-09-21T11:52:40-06:00 / revision 1, commit `652a38d` | 2026-09-21T11:52:40-06:00 |
 | Act (Run grant, superseded) | 2026-09-21T11:52:40-06:00 | 2026-09-21T11:52:40-06:00 / U1 pickup plan, revision 1 | 2026-09-21T11:59:00-06:00 — tool built and committed; never accepted; grant superseded |
-| Frame and Decide (Plan) | 2026-09-21T12:02:00-06:00 | 2026-09-21T12:12:00-06:00 / revision 3, this Statement of Work | 2026-09-21T12:12:00-06:00 — plan registered |
-| Review | pending — criteria registered below | 2026-09-21T12:12:00-06:00 / criteria table in this revision | pending ratification; no criterion assessed yet |
+| Frame and Decide (Plan) | 2026-09-21T12:02:00-06:00 | 2026-09-21T12:12:00-06:00 / revision 3, the Statement of Work | 2026-09-21T12:12:00-06:00 — plan registered |
+| Act (granted) | 2026-09-21T12:33:00-06:00 | 2026-09-21T12:34:00-06:00 / revision 3 ratified by David; grant and unit states in this revision | pending — W1 in progress |
+| Review | 2026-09-21T12:33:00-06:00 | 2026-09-21T12:12:00-06:00 / criteria R1–R7, revision 3 | pending — no criterion assessed yet |
 
 ## Frame and Decide
 
@@ -80,20 +81,24 @@ restated here. No objective was added or dropped by the mode change.
 
 | # | Condition | Type | Basis | Affects | Resolver or change trigger |
 | --- | --- | --- | --- | --- | --- |
-| C1 | `findmynextbite.food` writes no access log: the site block carries no `log` directive and the app's access log goes to `/dev/null` | Given | Workspace copies `find-my-next-bite/ops/public.caddy` and `ops/public.service`, and that project's `docs/MEASUREMENT-CHOICE.md`; read 2026-09-21. The running host was not inspected from here | W3, W4, the recommendation, the project's stated success test | The principal adds the `log` block and confirms a file is written; then W3 becomes pickable |
-| C2 | No host anywhere has been confirmed to write a log that this tool has read | Given | Search of the workspace for access logs, 2026-09-21: none outside synthetic fixtures | Every claim about agents; W3; the difference between "the tool runs" and "the tool has answered" | The first real log. Until then no claim about a host may be published |
+| C1 | **Amended at revision 4.** Was: `findmynextbite.food` writes no access log — no `log` directive, and the app's access log goes to `/dev/null`. Now: the host writes Caddy JSON access logs at `/var/log/caddy/findmynextbite-access.log`, mode 0640, group `caddy`, rolling at 50 MiB with five files and 30 days kept, with the client address masked at write time (`ip_mask 16 32` on `remote_ip` and `client_ip`) | Given | Workspace copy `find-my-next-bite/ops/public.caddy`, updated 2026-09-21T12:30-06:00, plus the principal's report that he applied and verified it on the host; the running host was not inspected from here | W3, W4, the project's success test | Already triggered. The log exists; C12 decides whether W3 can run against it |
+| C2 | No real log has been read by this tool, and no copy of one is reachable from this environment | Given | Search of this machine for any copy, 2026-09-21: none. The tool has only ever read its own synthetic fixtures | Every claim about agents; W3; the difference between "the tool runs" and "the tool has answered" | The log becoming readable here (C12). Until then no claim about a host may be made |
 | C3 | The existing artefact: `agenttrace/` (five modules, 1,255 lines), seven synthetic fixtures, 89 tests passing in 0.2 s, `make ci` exit 0 | Given | Measured 2026-09-21; commit `c040601` and `make ci` | Alternatives B1–B3 and every estimate below | W1's review may qualify any of it; a defect does not change the alternatives unless it shows the approach is unsound |
 | C4 | Python 3.11.3 available; standard library only; no network in the tests; no new dependency | Given | The principal's brief; `CONTEXT.md`, "What we are deliberately not doing" | All units; it is what excludes B4 as things stand | A relaxation of the dependency constraint reopens B4 |
 | C5 | A user-agent string is self-declared and trivially spoofable | Given | HTTP; `CONTEXT.md`, "The claim boundary" | Every count; the wording of every output | Nothing changes this; the tool repeats it in its own output |
 | C6 | Whether either supported format matches what the host will actually write — Caddy's JSON field names and versions, and the variants of the combined line | Uncertainty | The fixtures are synthetic; no real log has been seen | W2, W3; the risk that a real log parses into a wrong or empty report | W3 against a real log; W2 makes the failure loud in the meantime |
-| C7 | Whether the principal will enable access logging at all | Uncertainty | C1; the decision has not been made as of this revision | The recommendation itself, and the value of W3 and W4 | Q1. If the answer is no, B3 becomes the recommended course |
+| C7 | **Resolved at revision 4.** Was: whether the principal would enable access logging at all. He did, on 2026-09-21; the value question it gated is now C12 | Uncertainty → resolved | The principal's grant message of 2026-09-21, and C1's evidence | W3, W4 | Closed. Recorded rather than deleted so the question is not reopened by accident |
 | C8 | What a real log contains that is sensitive beyond the addresses the tool never reads — full URIs with query strings, hostnames, paths that identify a person | Uncertainty | No real log inspected; Caddy redacts `Cookie`, `Set-Cookie` and `Authorization` by default but not query strings | Whether a real-log fixture may be committed; what the README must say about retention | Q3, and the first real log's inspection during W3 |
 | C9 | The twelve named agents are the right list for the principal's question | Assumption | The brief lists them; `CONTEXT.md` repeats the list | Classification and the headline figure | A real log showing an AI crawler outside the list, or a vendor renaming one; such a claim lands in "other bot" today, visibly |
 | C10 | One agent session is the unit of the estimates below, and the measured seven-minute build is not a human-effort baseline | Assumption | The tool was produced in one six-minute span on 2026-09-21 by Quill in this runtime | Every estimate | A different runtime, or a human-paced session, invalidates the scaling; W1's return should revise the rest |
-| C11 | The project's process documents were instantiated from a template written against Perspicuity 0.4.0, and the installed skill is 0.5.0 | Given | `/home/david/.dsh/skills/perspicuity/SKILL.md` (0.5.0) against `docs/RECORDS.md` and `AGENTS.md`; compared 2026-09-21 | How a worker reads the process here; the divergences below | Recorded here, not fixed: the template is a different repository (owner: David). Where they disagree, this record follows the skill |
+| C11 | **Partly resolved at revision 4.** The project's process documents were instantiated from a template written against Perspicuity 0.4.0 while the installed skill is 0.5.0. The principal propagated an updated set at commit `9e69ce2` (`AGENTS.md`, `docs/RECORDS.md`, `docs/records/README.md`, `scripts/check-project.sh`, `scripts/check_records.sh`), which resolves divergences 1–4 below and makes `make ci` fail loudly while `check-project.sh` is a stub | Given | `/home/david/.dsh/skills/perspicuity/SKILL.md` (0.5.0) against the updated documents; compared 2026-09-21 at `9e69ce2` | How a worker reads the process here; what the checks cover | Remaining: `AGENTS.md` still carries its unfilled "Standing constraints" placeholder, and `docs/RECORDS.md`'s naming example still shows a `sw-` id. Both are template artefacts; the template is a different repository (owner: David) |
+| C12 | The host's access log is not readable from this environment: `/var/log/caddy` does not exist on this machine, there is no `caddy` binary, and `david` is not in the `caddy` group; this session cannot use sudo and cannot fetch from the host | Given | Measured on this machine 2026-09-21T12:33-06:00: `ls -la /var/log/caddy/` (no such directory), `id` (`uid=1000(david)`, no `caddy` group), `which caddy` (nothing), and a filesystem search for any copy of the log (none) | W3, W4 | A copy of a window of the log placed in this workspace, or the tool run on the host with its output returned; owner David |
+| C13 | The host masks the client address at write time (`ip_mask 16 32` on `remote_ip` and `client_ip`), so the log holds a network, not a host | Given | Workspace copy `find-my-next-bite/ops/public.caddy`, updated 2026-09-21T12:30-06:00; the principal's message states the verification saw `75.159.0.0` | W3, Q3's fixture rules, the README's privacy note | Not a trigger for change: the tool never reads the field, and a fixture will strip it anyway |
 
-**The inherited process documents disagree with the installed skill in four places**, recorded
-here rather than repaired, because the template lives in another repository:
+**The divergences recorded at revision 3, and their resolution.** They were recorded rather than
+repaired, because the template lives in another repository; the principal propagated an updated
+document set the same day at `9e69ce2`, which settles 1–4. They are kept here so a reader of the
+earlier revision can see what changed:
 
 1. `docs/RECORDS.md`'s skeleton and `AGENTS.md` name `skill_version: 0.4.0`; the installed skill
    is 0.5.0. This record declares 0.5.0.
@@ -145,6 +150,10 @@ question this plan cannot settle. B4 is excluded by C4, not by preference.
 format-drift diagnostics (W2), and verify it on a real log before any claim about a host is made
 (W3, W4). Quill recommends; David ratifies.
 
+**Ratified by David on 2026-09-21T12:33:00-06:00**, with W1–W4 granted in that order and the
+fences in the grant below. The recommendation is kept as written; the selection is recorded in
+`Current position` and in Act.
+
 The tradeoff accepted: the tool stays **unverified against reality** until logging is switched on,
 so the plan spends its first session reviewing and hardening what exists rather than adding
 capability, and it accepts that the first real log may still surprise it. If Q1 is answered "no,
@@ -164,6 +173,15 @@ path loses a distinction that matters.
 | Q3 | If a log exists: may a redacted extract become a committed test fixture, and is anything beyond the address fields sensitive (query strings, paths, hostnames)? | David | W3's regression evidence, and any real-log fixture record |
 | Q4 | Is publication of the tool in scope now, and to where? | David (release word) | The publication work, which is out of scope until answered |
 | Q5 | Who assesses W1 — a second worker named by Quill, or David? The assessor must not be the author | David | W1's independence claim, and therefore the weight of its findings |
+
+**Answered by the principal, 2026-09-21, in the grant.** **Q1: yes** — he applied access logging
+to the host and verified it writes (C1, C13). **Q2: yes** — B1-amended is ratified and W1–W4 are
+granted, W1 first. **Q3: yes** — a real-log extract may be committed as a fixture under four
+rules: no addresses at all (strip the field even though it is masked upstream), no cookies, no
+query strings, and the window it came from recorded in or beside the fixture; a small honest
+extract beats a large one. **Q4: no** — publication is not in scope for this grant. **Q5:** the
+W1 reviewer must be a named worker who is not Quill; **Rook** is named in `docs/ACTORS.md` and in
+the grant below, and who assessed the review is recorded with its return.
 
 ### Decision index
 
@@ -191,6 +209,8 @@ committed); adding a third format or a dependency (a `tech-` record before the w
 | `README.md`, `docs/DESIGN.md`, `docs/ARCHITECTURE.md`, `TODO.md` | working tree, uncommitted | 2026-09-21T11:57 → 12:00 | uncommitted drafts; not covered by this plan |
 | Revision 2 of this record (`work_status: submitted`, U1 reported delivered) | working tree, uncommitted | 2026-09-21T12:00 | superseded and discarded: `submitted` implies a ratified plan that never existed |
 | This Statement of Work | `RECORD.md` revision 3 | 2026-09-21T12:12:00-06:00 | the plan |
+| Process documents brought to Perspicuity 0.5.0, and `scripts/check-project.sh` replaced with a deliberately failing stub | commit `9e69ce2` | 2026-09-21T12:29:51-06:00 | committed by the principal; the coordinator's records untouched; `make ci` now fails until the real checks are restored |
+| The grant, the named reviewer and the unit states | `RECORD.md` revision 4, `docs/ACTORS.md` | 2026-09-21T12:34:00-06:00 | this revision |
 
 **Honest provenance.** The tool was built under the Run grant registered at revision 1, before the
 principal changed the mode. That grant authorised building it; the mode change supersedes it. The
@@ -215,6 +235,61 @@ Every judgement is provisional on W1's review, and none of it is acceptance.
 | `docs/ARCHITECTURE.md` | **Discard, or reduce to a pointer** | It duplicates `docs/DESIGN.md` decisions D1–D11 with no added basis |
 | `TODO.md` | **Amend** | Its items are re-expressed here as Q1–Q5, units W1–W4 and the out-of-scope list |
 | Any claim that the tool "works" on a real host | **Discard** | Not established; no real log has been read (C2) |
+
+### Grant
+
+Recorded 2026-09-21T12:34:00-06:00 before any unit was picked up.
+
+- **Decider:** David, the principal. **Basis revision:** revision 3 of this record, the Statement
+  of Work, ratified 2026-09-21T12:33:00-06:00. The recommendation was Quill's; the selection is
+  David's.
+- **Granted:** the recommended course B1-amended, and units W1–W4 in the sequence W1, W2, W3, W4.
+- **Actor:** Quill (coordinator), with **Rook** named in `docs/ACTORS.md` as the W1 reviewer — a
+  worker who is not the author. Any further worker is named in this record before its assignment.
+- **Includes:** restoring the real project checks in `scripts/check-project.sh`; carrying out the
+  registered W1 pickup plan; correcting defects W1 finds inside the brief and without changing
+  the claim boundary; delivering W2's drift diagnostics and policy; running the tool against the
+  real log and hand-counting its figures (W3); recording the first real-host finding (W4);
+  amending `README.md`, `docs/DESIGN.md`, `docs/ARCHITECTURE.md` and `TODO.md` as the plan's
+  judgements direct; local commits.
+- **Excludes:** publication, pushing to a remote, deployment, spending and outbound messages
+  (Q4: no); any new dependency; any change to a host's configuration; committing a real-log
+  extract except under Q3's four rules and only after a `data-` record exists; any claim about a
+  host that W3 has not hand-checked.
+- **Stop condition:** stop and return to David if a unit needs a dependency, a per-server
+  configuration, a third format, publication, or anything else outside this repository; if W3's
+  counts cannot be reproduced by hand; if the log becomes readable only with a change to the
+  host; or if any finding changes the problem, the comparison or the selection. Adapting the
+  route inside this grant is the actor's call; amending the grant is not.
+
+### Unit states
+
+| Unit | State | Ratified basis | Grant | Pickup |
+| --- | --- | --- | --- | --- |
+| W1 | **picked up** 2026-09-21T12:35:00-06:00, in progress | revision 3 SOW, ratified by David 2026-09-21; grant above | as above | W1 pickup plan registered at revision 3 and frozen at revision 4 |
+| W2 | granted, not picked up — follows W1's return | as above | as above | at its own pickup |
+| W3 | granted, **blocked** on a readable log (C12) | as above | as above | at its own pickup, once the log is readable here |
+| W4 | granted, **blocked** on W3 | as above | as above | at its own pickup after W3 |
+
+### W1 pickup (in progress)
+
+Frozen basis for the review, named by commit and by hash so the review cannot drift:
+
+- The tool: commit `c040601` — `agenttrace/__init__.py` `e84fbe424deb`, `__main__.py`
+  `ea323dbc1678`, `classify.py` `ef3352526618`, `cli.py` `e1b01eb8a37c`, `parse.py`
+  `06cd75419d9e`, `report.py` `610bd272e1fe` (sha256 prefixes).
+- The tests and fixtures: commit `c040601` — `tests/test_classify.py` `6961e1b085e1`,
+  `test_cli.py` `454f7e9de527`, `test_parse.py` `ccb40bc515d8`, `test_report.py` `2af3cf2628bb`,
+  `support.py` `d0b363eaad29`; fixtures `caddy-sample.log` `c89b3be4479b` and the six others.
+- The drafts under review for their claims: `README.md` and `docs/DESIGN.md` as they stood when
+  the review was assigned (uncommitted; the reviewer records the hashes it read).
+- **Assignment:** Rook reviews the artefact against the brief, this plan and the claim boundary,
+  following the W1 pickup plan steps 1–6. Rook modifies nothing; the return is a findings list
+  with severity, evidence and a reproducible check each, plus what was verified, what could not
+  be, and what was not examined.
+- **Return destination:** this record, in Rook's name. Quill reproduces each finding and records
+  the response; David accepts the review or asks for correction. Rook's completion is not
+  acceptance.
 
 ### Scope of work
 
@@ -271,7 +346,9 @@ re-runs `make ci` does not meet this.
 
 ### Grant requested
 
-**Requested.** That David ratify:
+Requested at revision 3; **granted in full by David on 2026-09-21T12:33:00-06:00**, with
+publication excluded (Q4) and Rook named as the W1 reviewer (Q5). The request is kept as
+registered so the grant can be read against it. That David ratify:
 
 1. the recommended course (B1 amended) and its units W1–W4 with the done-when above;
 2. the W2 amendment to the existing artefact — format-drift diagnostics and the
@@ -315,6 +392,18 @@ No timed obligation exists yet, so no `next_check` is set: the plan waits on the
 answers, not on a date. When W3 has a log, its window and the review date belong here.
 
 ## Changes
+
+**Revision 4**, 2026-09-21T12:34:00-06:00. Records the principal's grant and the units it
+authorises, before any unit was picked up. Added: the mode change to `Run` with the earlier
+modes and their reasons; the selection (`selected`, David, on revision 3's basis) in place of the
+recommendation; Q1–Q5 answered; the grant with its decider, actor, includes, excludes and stop
+condition; the unit-state table; the frozen revision and hashes for W1; W2, W3 and W4 as granted,
+with W3 and W4 blocked; and C12 (the host's log is not readable from this environment) and C13
+(the host masks the client address at write time). Amended: C1 (the host now writes the log), C2
+(no real log has been read here), C7 (resolved: logging was enabled), C11 (the process documents
+were propagated to 0.5.0 at `9e69ce2`, settling the four divergences). Source: the principal's
+grant message of 2026-09-21. Reason: a grant is registered before the work it authorises. Affects:
+W1–W4 and the project checks. No code was changed by this revision.
 
 **Revision 3**, 2026-09-21T12:12:00-06:00. RECORD.md became the project's Statement of Work after
 the principal changed the mode from `Run` to `Plan`. Added: the mode declaration with the earlier

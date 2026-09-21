@@ -37,6 +37,7 @@ a reader of an older record needs to be able to look up a name that no longer ac
 | --- | --- | --- | --- | --- |
 | David | Human | Principal and decider | 2026-09-21 | Owns the objectives and the selection. Retains spending, outbound messages, external agreements and the release word. |
 | Quill | Agent | Coordinator | 2026-09-21 | Chosen by Quill in its first session from the candidates Quill, Rook and Marlow: one syllable, a persona rather than a job, no vendor or model name, not a living person. Owns [`RECORD.md`](../RECORD.md) and every record under `docs/records/` until it names a worker for one. |
+| Rook | Agent | Reviewer (W1) | 2026-09-21 | Named by Quill for the independent review of the `agenttrace` artefact, at the principal's condition that the reviewer is not the author (Q5 in [`RECORD.md`](../RECORD.md)). Rook writes no code and changes nothing under review; its return is a findings list in the record, and its completion is not acceptance. |
 
 Named for this project by Quill on 2026-09-21, before the first record was filed. The name is
 stable: the model behind it can change, the name does not. Workers are named by Quill when their
