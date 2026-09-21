@@ -1,0 +1,6 @@
+this line is not an access log entry at all
+203.0.113.70 - - [18/Sep/2026:07:00:00 +0000] "GET / HTTP/1.1" 200 100 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+
+{"level":"info","ts":
+[18/Sep/2026:07:01:00 +0000] "GET / HTTP/1.1" 200 100
+203.0.113.71 - - [18/Sep/2026:07:02:00 +0000] "GET /robots.txt HTTP/1.1" 200 219 "-" "Mozilla/5.0 (compatible; GPTBot/1.2; +https://openai.com/gptbot)"
