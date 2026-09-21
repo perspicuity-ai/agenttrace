@@ -1,22 +1,25 @@
 #!/bin/sh
 # Project-specific checks.
 #
-# Everything that must be true before a commit belongs here: the test suite, the linter, the
-# build, link checks. `make ci` runs this after the record check, so a failure here fails the
-# build.
+# Everything that must be true before a commit belongs here. `make ci` runs this after
+# the record check, so a failure here fails the build.
 #
-# THIS STUB DELIBERATELY FAILS. It used to print a note and exit 0, which meant a project could
-# have failing tests and a green `make ci` at the same time. A check that establishes nothing is
-# worse than no check, because it is believed. Replace the body with the real checks.
+# Two checks, both offline:
+#   1. the package and the tests byte-compile;
+#   2. the test suite passes, driven from the synthetic logs in tests/fixtures/.
+#
+# The tests make no network call and read nothing outside this repository. They do not
+# establish that either log format is what a given server writes, that the twelve agent
+# names match what the vendors actually send, or that any host produces a log at all.
 set -eu
 
 cd "$(dirname "$0")/.."
 
-echo "error: no project checks are defined." >&2
-echo "       scripts/check-project.sh is still the template stub, so 'make ci' would" >&2
-echo "       report success without verifying anything." >&2
-echo "" >&2
-echo "       Replace the body with the real checks -- at minimum the test suite -- and" >&2
-echo "       run 'make ci' again. If there is genuinely nothing to check yet, make this" >&2
-echo "       script say so and exit 0 deliberately, in a sentence a reader can judge." >&2
-exit 1
+echo "== byte-compile =="
+python3 -m compileall -q agenttrace tests
+echo "agenttrace/ and tests/ compile"
+
+echo
+echo "== tests =="
+echo "python3 -m unittest discover -s tests -t ."
+python3 -m unittest discover -s tests -t .
