@@ -8,9 +8,11 @@ State at 2026-09-21, after the first real log was read. The units and their stat
 
 ## Waiting on the principal
 
-- **A longer window of the host's log.** The 408-second window that exists is parser evidence:
-  it shows the tool reads what a real Caddy writes, and it cannot support a claim about agents.
-  A week of it would make W4 a finding rather than a note. Owner: David.
+- **An untouched, week-long window of the host's log.** The windows so far (408 and 510 seconds)
+  are parser evidence and a record of what happened while somebody was at the keyboard: no
+  external agent appeared, and the one `GPTBot` line was the operator's own test. A week nobody
+  is touching is what turns W4 into a finding about agent traffic. Owner: David, at the
+  2026-09-28 checkpoint.
 
 ## Blocked on the release word
 
@@ -19,12 +21,11 @@ State at 2026-09-21, after the first real log was read. The units and their stat
 
 ## Next by the plan
 
-- **W3's final note and W4.** The hand-count is done against the 408-second window; the finding
-  is recorded with its window and its limits. A longer extract extends it.
-- **Verify the comment that the GPTBot line was not a test.** Every entry in the first window
-  shares one masked `/16`, and two entries are the change's own `curl` calls, so the single
-  claimed `GPTBot` request cannot be separated from a local test by this log. Ask David; until
-  then the finding says so.
+- **W4's finding stands corrected:** zero external AI agents in the 510-second window, and the
+  only named-agent line in it is the operator's own synthetic `GPTBot` request. Recorded at
+  RECORD.md revision 7 with the earlier text preserved.
+- **The next extract must be one nobody is touching.** Enabling the logging produced the only
+  notable entry in the first observation; repeating that would repeat the artefact.
 
 ## Deliberately not doing yet
 

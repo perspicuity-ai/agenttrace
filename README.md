@@ -159,12 +159,12 @@ search crawler, another bot, a browser, or unrecognised.
 
 ### The first real window
 
-`agenttrace --self FindMyNextBiteMonitor var/findmynextbite-access.log`, over 21 requests on
-2026-09-21, is what the tool says about a real server — and it is also the shape of the honest
-answer when a window is too short to conclude anything:
+`agenttrace --self FindMyNextBiteMonitor var/findmynextbite-access.log`, over 42 requests on
+2026-09-21, is what the tool says about a real server — and it is also the clearest example of
+why every count in it is a count of *claims*:
 
 ```
-coverage  2026-09-21T18:28:02Z .. 2026-09-21T18:34:50Z  (6.8 minutes, 21 requests)
+coverage  2026-09-21T18:28:02Z .. 2026-09-21T18:36:32Z  (8.5 minutes, 42 requests)
 
 Is /llms.txt being read?
 
@@ -172,21 +172,24 @@ Is /llms.txt being read?
 
 Set aside — declared your own (--self)
 
-        17  FindMyNextBiteMonitor  (15 path(s))
+        38  FindMyNextBiteMonitor  (32 path(s))
 
 Site-wide
 
-  requests in this log                   21
-  claimed by a named AI agent             1  (4.8%)
-  other bot                               2  (9.5%)
-  browser                                 1  (4.8%)
-  declared your own                      17  (81.0%)
+  requests in this log                   42
+  claimed by a named AI agent             1  (2.4%)
+  other bot                               2  (4.8%)
+  browser                                 1  (2.4%)
+  declared your own                      38  (90.5%)
 ```
 
-`GPTBot` did request `/llms.txt` in that window, and the tool is right to say so: the bytes are
-in the log. Whether an agent read the site is a different question, and 408 seconds of one
-host cannot answer it — every entry shares one masked `/16`, and two of them are the change's
-own `curl` calls. The window's duration is printed for exactly that reason.
+The tool is right about the bytes: a request carrying the `GPTBot` string did ask for
+`/llms.txt` and got a 200. The claim was false — the site's operator had generated it with
+`curl -A "…GPTBot/1.2…"` minutes earlier, to prove the logging he had just switched on was
+working. **Zero external AI agents appear in that window**, and the only named-agent line in it
+is an artefact of the change that enabled the observation. That is the whole reason the report
+says *claims* and prints the window's duration: a 510-second sample, taken while somebody was at
+the keyboard, cannot tell you what a week looks like.
 
 ## When there is nothing to report
 

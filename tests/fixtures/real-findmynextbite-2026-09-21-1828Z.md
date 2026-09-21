@@ -37,10 +37,17 @@ what was actually done to the bytes is recorded here.
 It is **408 seconds** of one host, taken minutes after access logging was switched on. It is
 evidence that the tool reads what a real Caddy writes — field shapes, statuses, a real
 `User-Agent` array, a real masked address field. It is **not** evidence about how agents treat the
-site: a seven-minute window says nothing about a week, and one of the requests in it claims to be
-`GPTBot` while every entry in the window shares a single masked `/16`, which the log cannot use to
-separate a local test from a remote crawler.
+site: a seven-minute window says nothing about a week, and every entry in it shares a single masked
+`/16`.
+
+**The one `GPTBot` line in it is synthetic.** The principal has confirmed (2026-09-21) that he
+generated it himself with `curl -A "…GPTBot/1.2…" https://findmynextbite.food/llms.txt` while
+verifying that the logging he had just switched on was working; it is the first line in the file
+because it proved the log was being written. **Zero external AI agent traffic appears in this
+window**, which is why the fixture is useful as parser evidence and useless as evidence about
+agents.
 
 The busiest client in the window is `FindMyNextBiteMonitor/1.0` with 17 of the 21 requests: the
-site's own monitor. Two entries are `curl/7.81.0` from the change that enabled logging. Treat the
-counts here as parser evidence and as a record of what one short window contained, nothing more.
+site's own monitor. Two entries are the operator's `curl/7.81.0` calls, one of them carrying the
+spoofed `GPTBot` string. Treat the counts here as a record of what one short window contained and
+of what a real server's lines look like, nothing more.

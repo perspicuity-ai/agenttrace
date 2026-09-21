@@ -1,11 +1,11 @@
 ---
 format: perspicuity-work/1
 id: at-project
-revision: 6
+revision: 7
 skill_version: 0.5.0
 updated: 2026-09-21
 created_at: "2026-09-21T11:48:05-06:00"
-updated_at: "2026-09-21T13:05:00-06:00"
+updated_at: "2026-09-21T13:40:00-06:00"
 record_status: open
 work_status: in_review
 next_check: 2026-09-28
@@ -36,11 +36,11 @@ Review due: 2026-09-28 — the fallback checkpoint for the outstanding observati
 
 Work: W1, W2, W3 and W4 are delivered and their evidence is in Act. W1: Rook's independent review of `c040601`, with the hand-count reproduced, the two promises attacked and eleven findings, none a stop condition. W2: the amended unit delivered at `6785c26` — the eleven findings answered, the drift policy, honest discovery verdicts, `--self`, the dominance line, unrecognised-client visibility and window honesty — 140 offline tests, `make ci` exit 0. W3: the first real log read, hand-counted, and its extract committed redacted under the registered rules. W4: the finding recorded, thin, with its window and its limits stated.
 
-Outcome: the format claim is confirmed against a real server — 21 of 21 real Caddy JSON lines read, detected with no flag, window 2026-09-21T18:28:02Z → 18:34:50Z (408 seconds). One request in that window claims `GPTBot` and asked for `/llms.txt`, receiving a 200; 17 of the 21 requests are the site's own monitor. **Nothing about how agents treat the site is established**, and the finding says so.
+Outcome: the format claim is confirmed against a real server — 42 of 42 refreshed Caddy JSON lines read, detected with no flag, window 2026-09-21T18:28:02Z → 18:36:32Z (510.40 seconds). **Zero external AI agent traffic was observed in that window.** The single named-agent line in it is synthetic: David has answered that he generated it himself with `curl` while verifying that the logging he had just switched on worked (see the W4 correction below). 38 of the 42 requests are the site's own monitor. Nothing about how agents treat the site is established, and the finding says so.
 
-Next: David — accept the W1–W4 returns, answer whether the single `GPTBot` line was a test of his own, and pull a longer window if W4 should become a finding about agent traffic.
+Next: David — accept the W1–W4 returns and pull an untouched, week-long extract for the 2026-09-28 checkpoint, which is what would turn W4 from "no agent in eight minutes" into a finding about agent traffic.
 
-Waiting on: David — a longer extract (a week would do) for W4's benefit finding, and an answer on the `GPTBot` line's origin.
+Waiting on: David — an untouched week-long extract at the checkpoint. The `GPTBot` question is answered and the record corrected.
 
 Blocked: only W4's benefit finding. W1–W3 are delivered; the review criteria that depend on a longer window stay pending rather than assumed.
 
@@ -495,6 +495,9 @@ in [`docs/records/2026-09-21-real-log-fixture-redaction.md`](records/2026-09-21-
 | Named agents' missing paths (404/410) | 0 | none | agrees |
 | Discovery files | `/llms.txt` by GPTBot (200); `/robots.txt`, `/sitemap.xml` by no named agent | same | agrees |
 
+The working copy was later refreshed to 42 entries (same start, later end — see W4); the committed
+fixture remains the 21-entry extract of the first window, and its provenance note says so.
+
 **Independent check of this hand-count:** Marlow, an assessor who is not the author and not the W1
 reviewer, counted the same window from the raw log with its own tools and rebuilt the committed
 extract from the original to check the redaction. **Result: every revision-6 figure reproduced.**
@@ -525,23 +528,62 @@ logging was switched on. It establishes that the parser reads what a real Caddy 
 not establish anything about how agents treat the site, and every entry in it shares one masked
 `/16`, so the log cannot separate a local test from a remote crawler.
 
-### W4 — the first real-host finding, thin by construction (2026-09-21T13:0x-06:00)
+### W4 — the first real-host finding: no agent traffic, and the instrument's own line
 
-**Finding, for the window 2026-09-21T18:28:02Z → 18:34:50Z only:** one request in the window
+**Corrected at revision 7.** Revision 6 recorded this finding as: *"one request in the window
 claimed to be `GPTBot` and asked for `/llms.txt`, receiving `200`; no other named AI agent
-appeared; no named agent requested `/robots.txt` or `/sitemap.xml`; no named agent asked for a
-path it did not get; 17 of the 21 requests came from the site's own monitor (declared with
-`--self` for this reading) and 2 from `curl`.
+appeared"*, with the open question of whether that line was a test. **The source of the
+correction is David, the principal**, who answered on 2026-09-21: the line was his own deliberate
+test — `curl -A "Mozilla/5.0 … compatible; GPTBot/1.2; +https://openai.com/gptbot"
+https://findmynextbite.food/llms.txt` — generated while verifying that the access logging he had
+just switched on was working. It is the first line in the file because it was the request that
+proved the log was being written. The earlier text is preserved in commit `dc34a32`.
 
-**Limits, stated in the finding:** the window is 408 seconds; the client address is masked to a
-`/16` at write time so every entry shares one network; two entries are the change's own `curl`
-calls; and the single `GPTBot` claim has not been confirmed as a real visit rather than a test.
-**Open question for David:** was that `GPTBot` request his own test? Until it is answered, the
-finding is recorded as one self-declared claim in one short window, which is all the bytes
-support. A longer extract (owner: David) would turn this into a finding about agent traffic; it
-is the commitment at `review_due: 2026-09-28`.
+**Finding, for the window 2026-09-21T18:28:02Z → 18:36:32Z (510.40 seconds): no external AI agent
+traffic was observed.** Precisely: no request in the window carried a named-agent user-agent
+string other than the single `GPTBot` line that the principal attributes to his own test — and the
+window holds only four self-declared user-agent strings in total (the monitor, two `curl` calls,
+and one browser). The eleven other agent names occur nowhere in the file. The claim is bounded the
+way every claim in this record is: a user-agent string is self-declared, and all 42 entries share
+one masked `/16`, so the bytes alone cannot separate a local test from a remote crawler. In the same window: 38 of 42 requests
+are the site's own monitor (declared with `--self` for this reading), 2 are the operator's `curl`
+calls — one of them carrying the spoofed `GPTBot` string — and 1 is a browser. `/robots.txt` was
+requested by nobody. `/llms.txt` was requested twice, both times by the operator's own tests. The
+only two non-200 responses are the monitor's `/foods/impossible-beef/` and a malformed `/foods//`,
+both `404`; no named agent asked for a path it did not get, because no named agent asked for
+anything.
 
-**Not published.** Q4 was answered "not in scope", so this finding lives in this record only.
+**The measurement perturbed what it measured.** Enabling the observation produced the only notable
+entry in the first observation: the most interesting line in the first window is an artefact of
+the instrument rather than a finding about the site. Recorded here for two reasons — so a later
+reader does not mistake it for an agent visit, and so it is not repeated: **the next extract
+should be one nobody was touching**, which is what the 2026-09-28 checkpoint asks for.
+
+**What it establishes, and what it does not.** It establishes that nobody had ever checked, which
+is the reason this project exists, and that in the first eight and a half minutes of ever looking
+no agent appeared. It does **not** establish whether the site's machine-readable work —
+`/llms.txt`, the sitemap, structured identity, a permissive crawler stance — is paying off: a
+510-second window is not a week, and the counts describe that window alone. **Not published** (Q4
+was answered "not in scope"), so this finding lives in this record only.
+
+**Independent check of the refreshed window:** Marlow, the W3 assessor, reproduced every figure
+above from the raw text with its own tools and confirmed them in full — 42 entries; 18:28:02Z →
+18:36:32Z, 510.3974187 seconds; monitor 38 (32 paths), `curl` 2, browser 1, claimed `GPTBot` 1;
+statuses 200 ×40 and 404 ×2; 33 distinct query-stripped paths; `/robots.txt` requested by nobody;
+`/llms.txt` twice, both by the operator's tests; the two 404s being `/foods/impossible-beef/` and
+`/foods//`, both the monitor's — and that the tool agrees with each published figure in text and
+JSON. It also confirmed that the first 21 entries of the refreshed file are identical to the
+committed fixture, so the earlier redaction check carries over, and that the monitor's 32 paths
+mean `/foods//` is kept distinct from `/foods/`.
+
+Marlow attached the caveat this finding is recorded under: the attribution of the `GPTBot` line to
+the principal's own test is **external evidence, not something the bytes show** — a self-declared
+user-agent is spoofable in principle. It noted a detail consistent with the attribution but not
+proof of it: that line sits 0.41 seconds after a browser request to `/`, with the `curl` pair
+following a minute and a half later, which is the shape of a manual probe rather than a crawler.
+The finding above is therefore phrased as "no named-agent user-agent string other than the one the
+principal attributes to his own test", and the plain reading — zero external agents observed — is
+a statement about the window, not about the site.
 
 ### Out of scope
 
@@ -599,13 +641,28 @@ from evidence of later benefit, and neither is inferred from the other.
 | R4 | A format the tool does not recognise, or a drifted one, produces a specific diagnostic and never a plausible report | `caddy-drifted.log`, the partial-drift warning, the W2 tests | Quill at W2's return | **Met.** The diagnostic names the keys seen and the fields expected, exits 2, and the partial case warns at the top of the report | — |
 | R5 | The first real-host finding names its log source and window, and its headline counts are reproduced by an independent hand count | W3's return above; Marlow's check | Marlow at W3; David accepts W4 | **Met.** Marlow reproduced every revision-6 headline figure from the raw log, in text and JSON, and verified the fixture's redaction exhaustively. It found two documentation defects (M1, M2), both fixed | The record's own text was the only thing wrong; the tool and the fixture needed no change |
 | R6 | `make ci` exits 0 and `make records` is clean at every return | The command output recorded with each return | Quill at every return | **Met.** 140 tests OK, `make ci` exit 0, `make records` clean at `6785c26` | — |
-| R7 | Delivery is not treated as benefit: "the tool runs" and "an agent was observed" stay distinct | This record and the W4 finding | David at acceptance | **Met.** W4 says what one 408-second window contained and states that nothing about agent behaviour follows from it; the parser result and the agent result are separate lines | — |
-| R8 | The promised observation: a longer window, which would turn W4's note into a finding about agent traffic | A fresh extract from the host; the tool's report over it | David provides; Quill reports; checkpoint 2026-09-28 | Pending — the commitment recorded at `review_due` | If no longer extract exists by the checkpoint, Quill re-asks and records that the question is still open |
+| R7 | Delivery is not treated as benefit: "the tool runs" and "an agent was observed" stay distinct | This record and the W4 finding | David at acceptance | **Met, and demonstrated.** The tool ran, parsed every real line, and reported one claimed agent; the principal's answer showed that claim was his own test, and W4 was corrected to "zero external AI agents observed" rather than left standing. The two findings were never merged | The correction is recorded as a revision, with the earlier text preserved in `dc34a32` |
+| R8 | The promised observation: an **untouched** week-long window, which would turn W4's eight-minute note into a finding about agent traffic | A fresh extract nobody was touching; the tool's report over it | David provides; Quill reports and has it independently checked; checkpoint 2026-09-28 | Pending — the commitment recorded at `review_due`. The refreshed 510-second extract was still produced by a person at the keyboard, so it is not the observation R8 asks for | If no untouched extract exists by the checkpoint, Quill re-asks and records that the question is still open |
 
 `next_check` and `review_due` are both set to 2026-09-28: R8 is the one timed obligation, and it
 is a fallback date for an event whose real trigger is the principal pulling a longer extract.
 
 ## Changes
+
+**Revision 7**, 2026-09-21T13:40:00-06:00. Corrects the delivered W4 finding on the principal's
+answer, and records the limitation that answer revealed. **Previous text** (revision 6, preserved
+in commit `dc34a32`): *"one request in the window claimed to be `GPTBot` and asked for `/llms.txt`,
+receiving `200` … the single `GPTBot` claim has not been confirmed as a real visit rather than a
+test."* **New text**, in W4 above: *"zero external AI agents … the only named-agent line in it is
+synthetic, produced by the change that enabled the logging"*, with the refreshed 510-second window
+and the instrument-artefact limitation. **Source of the correction: David, the principal**, who
+answered on 2026-09-21 that he generated the line himself with `curl` while verifying the logging
+he had just enabled. Also updated: `Current position` (outcome, next, waiting on), the W3 note that
+the working copy was refreshed, review rows R7 and R8, and — at the same time — the fixture's
+provenance note and the README's real-window example, both of which had described the `GPTBot`
+claim without knowing its origin. Reason: a delivered finding that the decider has corrected must
+be corrected in place as a revision, not left standing and not quietly rewritten. Affects: W4, R8,
+the public description of the tool's first real run.
 
 **Revision 6**, 2026-09-21T13:05:00-06:00 (amended at 13:2x when Marlow's check returned).
 Records the returns of W1–W4 and sets the work to

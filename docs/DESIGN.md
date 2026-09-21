@@ -309,12 +309,14 @@ mixed formats, long URLs, far more distinct paths (the analysis holds a path set
 memory grows with distinct paths, not with lines) and a slower disk. A 10-million-line log
 would take roughly 90–100 seconds by this rate.
 
-**The first real log** (W3, 2026-09-21): 21 Caddy JSON lines from `findmynextbite.food`,
-window 2026-09-21T18:28:02Z → 18:34:50Z (408.36 seconds). **21 of 21 lines read as requests,
+**The first real log** (W3, 2026-09-21): 42 Caddy JSON lines from `findmynextbite.food`,
+window 2026-09-21T18:28:02Z → 18:36:32Z (510.40 seconds). **42 of 42 lines read as requests,
 format detected with no flag** — the format claim's first evidence from a real server. Clients:
-`FindMyNextBiteMonitor/1.0` 17, `curl/7.81.0` 2, one browser, one claimed `GPTBot`. The `GPTBot`
-entry requested `/llms.txt` and got a 200, which the report states; the window is far too short
-for that to be a finding about the site, and every entry shares one masked `/16`.
+`FindMyNextBiteMonitor/1.0` 38, the operator's `curl/7.81.0` 2, one browser, and one line carrying
+a spoofed `GPTBot` string that the operator has confirmed was his own test. **Zero external AI
+agent traffic in the window.** The report states the `GPTBot` claim because the bytes say it; the
+principal's answer is what makes it a false claim, which is the cleanest demonstration available
+of why this tool counts claims and prints its window's duration.
 
 **The checks:** `python3 -m unittest discover -s tests -t .` runs 140 tests in about 0.2 s, with
 no network and no fixture outside `tests/fixtures/`; `scripts/check-project.sh` byte-compiles
