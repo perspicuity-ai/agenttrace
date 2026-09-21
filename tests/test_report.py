@@ -254,7 +254,11 @@ class NoAddressTests(unittest.TestCase):
 
     def test_no_fixture_file_was_missed(self):
         on_disk = {path.name for path in FIXTURES.glob("*.log")}
-        self.assertEqual(on_disk, set(self.FIXTURES_WITH_ADDRESSES) | {"empty.log"})
+        synthetic = set(self.FIXTURES_WITH_ADDRESSES) | {"empty.log"}
+        # The real-log fixture has no addresses by design: its redaction is checked in
+        # tests/test_real_fixture.py.
+        real = {"real-findmynextbite-2026-09-21-1828Z.log"}
+        self.assertEqual(on_disk, synthetic | real)
 
 
 class DiscoveryOrderTests(unittest.TestCase):
