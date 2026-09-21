@@ -35,8 +35,12 @@ a reader of an older record needs to be able to look up a name that no longer ac
 
 | Name | Kind | Role | From | Notes |
 | --- | --- | --- | --- | --- |
-| <principal's name> | Human | Principal and decider | <date> | Owns the objectives and the selection. Retains spending, outbound messages, external agreements and the release word. |
-| *unnamed* | Agent | Coordinator | — | Chooses its own name in its first session, then records it here. Until then, records must not use a role word in its place. |
+| David | Human | Principal and decider | 2026-09-21 | Owns the objectives and the selection. Retains spending, outbound messages, external agreements and the release word. |
+| Quill | Agent | Coordinator | 2026-09-21 | Chosen by Quill in its first session from the candidates Quill, Rook and Marlow: one syllable, a persona rather than a job, no vendor or model name, not a living person. Owns [`RECORD.md`](../RECORD.md) and every record under `docs/records/` until it names a worker for one. |
+
+Named for this project by Quill on 2026-09-21, before the first record was filed. The name is
+stable: the model behind it can change, the name does not. Workers are named by Quill when their
+assignment is made, and the name travels with the grant into the return.
 
 ## Retiring a legacy label
 
