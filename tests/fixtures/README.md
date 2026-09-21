@@ -14,7 +14,11 @@ like the real thing. No real request, visitor or address is recorded.
 | `caddy-all-agents.log` | One request from each of the twelve named agents, plus a Mozilla-prefixed `Applebot` and `Googlebot`, to pin the classification order |
 | `caddy-no-agents.log` | Browsers, search crawlers and other bots only: the honest "no agent traffic" state |
 | `malformed.log` | 6 lines, of which 2 are readable requests: a plain text line, a truncated JSON line, a bare request fragment and a blank line |
+| `caddy-drifted.log` | Caddy-shaped JSON whose access fields are renamed (`request.path`, `status_code`): the refused-rather-than-guessed state |
+| `caddy-llms-statuses.log` | `/llms.txt` answered 302, `/robots.txt` 304 and `/sitemap.xml` 403, by three named agents: the discovery verdicts that are not "read" |
+| `combined-referer.log` | Apache's stock `referer` LogFormat and its `agent` variant: one trailing quoted field, plus a plain common line |
 | `empty.log` | Zero bytes: the "cannot answer at all" state |
+| `real-findmynextbite-2026-09-21-1828Z.log` | The one real extract, redacted under the registered rules; provenance in the `.md` beside it |
 
 Counts asserted in the tests are hand counts of these files. If a fixture changes, the
 numbers in `tests/test_report.py`, `tests/test_parse.py` and `tests/test_cli.py` change

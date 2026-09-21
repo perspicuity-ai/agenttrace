@@ -13,20 +13,27 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+from typing import Sequence
 
 CATEGORY_NAMED_AGENT = "named_ai_agent"
 CATEGORY_SEARCH_CRAWLER = "search_crawler"
 CATEGORY_OTHER_BOT = "other_bot"
 CATEGORY_BROWSER = "browser"
 CATEGORY_UNKNOWN = "unknown"
+#: A client the operator declared as their own (``--self``). Not a judgement by the tool:
+#: a site's own monitor is usually the loudest bot in its log, and counting it as AI
+#: traffic would be the most misleading thing this report could do.
+CATEGORY_SELF = "declared_self"
 
-#: Display order for the site-wide breakdown: the agents the report is about first.
+#: Display order for the site-wide breakdown: the agents the report is about first, the
+#: clients the operator set aside last.
 CATEGORY_ORDER = (
     CATEGORY_NAMED_AGENT,
     CATEGORY_SEARCH_CRAWLER,
     CATEGORY_OTHER_BOT,
     CATEGORY_BROWSER,
     CATEGORY_UNKNOWN,
+    CATEGORY_SELF,
 )
 
 CATEGORY_LABELS = {
@@ -34,7 +41,8 @@ CATEGORY_LABELS = {
     CATEGORY_SEARCH_CRAWLER: "search crawler",
     CATEGORY_OTHER_BOT: "other bot",
     CATEGORY_BROWSER: "browser",
-    CATEGORY_UNKNOWN: "unknown",
+    CATEGORY_UNKNOWN: "unrecognised",
+    CATEGORY_SELF: "declared your own",
 }
 
 #: The named AI agents, exactly as the brief lists them. Order does not matter here:
@@ -141,6 +149,14 @@ OTHER_BOT_PATTERNS = (
     "zoominfobot",
     "megaindex",
     "monitoring",
+    # Health checks and monitors. A site's own monitor is usually the loudest client in
+    # its log; these tokens at least stop it being counted as an unrecognised visitor.
+    # ``--self`` is the honest fix when the operator knows which one is theirs.
+    "monitor",
+    "healthcheck",
+    "health-check",
+    "kube-probe",
+    "blackbox",
 )
 
 #: A browser has to look like one: a Mozilla-compatible string carrying an engine
@@ -201,17 +217,27 @@ def _claim(category: str, agent: str | None = None) -> Claim:
     return Claim(category=category, agent=agent, label=agent or CATEGORY_LABELS[category])
 
 
-def classify(user_agent: str | None) -> Claim:
+def classify(user_agent: str | None, declared_self: Sequence[str] = ()) -> Claim:
     """Return the claim made by *user_agent*.
 
     An absent, empty or ``-`` user-agent is ``unknown``: no claim was made at all.
+
+    A token in *declared_self* — the operator's ``--self`` declarations — wins over every
+    rule below it, including the named agents. That is deliberate: the operator knows
+    which client is the site's own, and a declaration is the only way the tool can avoid
+    presenting a site's own monitor as somebody's agent.
     """
 
     text = (user_agent or "").strip()
+    lowered = text.lower()
+
+    for token in declared_self:
+        cleaned = (token or "").strip()
+        if cleaned and cleaned.lower() in lowered:
+            return Claim(category=CATEGORY_SELF, agent=None, label=cleaned)
+
     if not text or text == "-":
         return _claim(CATEGORY_UNKNOWN)
-
-    lowered = text.lower()
 
     for token, name in _NAMED_RULES:
         if token in lowered:

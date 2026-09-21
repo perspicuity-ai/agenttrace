@@ -15,6 +15,13 @@ from tests.support import REPO_ROOT, fixture
 ADDRESS = re.compile(r"\b\d{1,3}(?:\.\d{1,3}){3}\b")
 CADDY = fixture("caddy-sample.log")
 COMBINED = fixture("combined-sample.log")
+REAL = fixture("real-findmynextbite-2026-09-21-1828Z.log")
+
+
+def unwrapped(text):
+    """The report with its display line wrapping removed."""
+
+    return " ".join(text.split())
 
 
 def without_source_lines(text):
@@ -78,11 +85,13 @@ class UsageErrorTests(unittest.TestCase):
         self.assertEqual(1, caught.exception.code)
 
     def test_a_missing_file(self):
+        # A source that cannot be opened is reported as a failed source, and the run
+        # still explains itself rather than printing nothing (W1 F8).
         code, out, err = invoke([str(fixture("does-not-exist.log"))])
         self.assertEqual(1, code)
-        self.assertEqual("", out)
-        self.assertIn("no such file", err)
-        self.assertIn("no report produced", err)
+        self.assertIn("cannot read", err)
+        self.assertIn("CANNOT ANSWER", out)
+        self.assertIn("cannot read this source", unwrapped(out))
 
     def test_a_directory_is_not_a_log(self):
         code, _, err = invoke([str(fixture("."))])
@@ -101,12 +110,23 @@ class UsageErrorTests(unittest.TestCase):
             os.chmod(path, 0)
             if os.access(path, os.R_OK):  # running as a user who ignores the mode
                 self.skipTest("file permissions are not enforced here")
-            code, _, err = invoke([str(path)])
+            code, out, err = invoke([str(path)])
         finally:
             os.chmod(path, 0o644)
             path.unlink()
         self.assertEqual(1, code)
         self.assertIn("cannot read", err)
+        # W1 F8: the failure is reported in the output too, not swallowed.
+        self.assertIn("cannot read this source", unwrapped(out))
+        self.assertIn("CANNOT ANSWER", out)
+
+    def test_one_unreadable_source_does_not_discard_the_others(self):
+        code, out, err = invoke([str(CADDY), str(fixture("does-not-exist.log"))])
+        self.assertEqual(1, code)
+        self.assertIn("cannot read", err)
+        self.assertIn("Site-wide", out)
+        self.assertIn("33", out)
+        self.assertIn("cannot read this source", unwrapped(out))
 
 
 class ExitCodeTests(unittest.TestCase):
@@ -129,6 +149,56 @@ class ExitCodeTests(unittest.TestCase):
         self.assertIn("6 lines, 2 read as requests, 3 not read as requests", out)
 
 
+class DeclarationTests(unittest.TestCase):
+    """--self: the operator's own clients are set aside, not presented as agents."""
+
+    def test_without_a_declaration_the_whole_log_is_counted(self):
+        code, out, _ = invoke([str(REAL)])
+        self.assertEqual(0, code)
+        self.assertIn("17 of 21 requests (81.0%) came from one client", out)
+
+    def test_a_declaration_sets_the_client_aside(self):
+        code, out, _ = invoke(["--self", "FindMyNextBiteMonitor", str(REAL)])
+        self.assertEqual(0, code)
+        self.assertIn("Set aside — declared your own (--self)", out)
+        self.assertIn("17", out)
+        self.assertNotIn("came from one client", out)
+
+    def test_an_unmatched_declaration_is_stated(self):
+        code, out, _ = invoke(["--self", "NoSuchClient", str(REAL)])
+        self.assertEqual(0, code)
+        self.assertIn("--self matched nothing for: NoSuchClient", out)
+
+    def test_the_json_carries_the_declaration(self):
+        _, out, _ = invoke(["--self", "FindMyNextBiteMonitor", "--json", str(REAL)])
+        document = json.loads(out)
+        self.assertEqual(17, document["declared_self"]["matched"][0]["requests"])
+        self.assertEqual([], document["declared_self"]["unmatched"])
+        self.assertIsNone(document["dominant_client"])
+
+
+class DriftTests(unittest.TestCase):
+    def test_a_drifted_format_refuses_with_a_reason(self):
+        code, out, _ = invoke([str(fixture("caddy-drifted.log"))])
+        self.assertEqual(2, code)
+        self.assertIn("CANNOT ANSWER", out)
+        self.assertIn("request.uri", out)
+        self.assertIn("status_code", out)
+
+    def test_the_json_carries_the_diagnostic(self):
+        code, out, _ = invoke(["--json", str(fixture("caddy-drifted.log"))])
+        self.assertEqual(2, code)
+        document = json.loads(out)
+        self.assertEqual("no_readable_lines", document["state"])
+        self.assertTrue(document["sources"][0]["diagnostics"])
+
+    def test_a_partly_readable_source_still_reports_and_warns(self):
+        code, out, _ = invoke([str(fixture("malformed.log"))])
+        self.assertEqual(0, code)
+        self.assertIn("WARNING", out)
+        self.assertIn("Site-wide", out)
+
+
 class JsonTests(unittest.TestCase):
     def test_json_is_json_and_matches_the_text_counts(self):
         code, out, _ = invoke(["--json", str(CADDY)])
@@ -137,7 +207,7 @@ class JsonTests(unittest.TestCase):
         self.assertEqual("reported", document["state"])
         self.assertEqual(33, document["totals"]["requests"])
         self.assertEqual(13, document["totals"]["named_agent_requests"])
-        self.assertTrue(document["discovery"]["/llms.txt"]["read"])
+        self.assertTrue(document["discovery"]["/llms.txt"]["served"])
         self.assertEqual(["GPTBot"], document["discovery"]["/llms.txt"]["agents"])
         self.assertEqual(8, len(document["named_agents_not_seen"]))
 

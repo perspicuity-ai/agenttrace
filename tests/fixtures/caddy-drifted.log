@@ -1,0 +1,3 @@
+{"level":"info","ts":1790015282.41,"logger":"http.log.access.log0","msg":"handled request","request":{"method":"GET","path":"/","remote_ip":"203.0.113.5","headers":{"User-Agent":["GPTBot/1.2"]}},"status_code":200}
+{"level":"info","ts":1790015283.41,"logger":"http.log.access.log0","msg":"handled request","request":{"method":"GET","path":"/llms.txt","remote_ip":"203.0.113.6","headers":{"User-Agent":["ClaudeBot/1.0"]}},"status_code":200}
+this line is not a log line either

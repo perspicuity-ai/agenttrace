@@ -7,14 +7,16 @@ checked by reading the log lines under ``tests/fixtures/``.
 import json
 import re
 import unittest
+from collections import Counter
 
 from agenttrace import CLAIM_BOUNDARY, DISCOVERY_FILES
-from agenttrace.classify import CATEGORY_ORDER
+from agenttrace.classify import CATEGORY_ORDER, CATEGORY_UNKNOWN
 from agenttrace.classify import NAMED_AI_AGENTS
 from agenttrace.report import (
     STATE_NO_AGENT_TRAFFIC,
     STATE_NO_READABLE_LINES,
     STATE_REPORTED,
+    discovery_verdict,
     render_json,
     render_json_text,
     render_text,
@@ -58,6 +60,7 @@ class CaddyFixtureTests(unittest.TestCase):
                 "other_bot": 6,
                 "browser": 4,
                 "unknown": 2,
+                "declared_self": 0,
             },
             category_counts(self.analysis),
         )
@@ -142,6 +145,7 @@ class CombinedFixtureTests(unittest.TestCase):
                 "other_bot": 2,
                 "browser": 1,
                 "unknown": 0,
+                "declared_self": 0,
             },
             category_counts(self.analysis),
         )
@@ -198,7 +202,8 @@ class EmptyStateTests(unittest.TestCase):
         self.assertEqual(STATE_NO_READABLE_LINES, analysis.state)
         text = render_text(analysis)
         self.assertIn("CANNOT ANSWER", text)
-        self.assertNotIn(CLAIM_BOUNDARY, text)
+        # The boundary is carried in every state, including the one with no counts (W1 F3).
+        self.assertIn(CLAIM_BOUNDARY, unwrapped(text))
         document = render_json(analysis)
         self.assertEqual(STATE_NO_READABLE_LINES, document["state"])
         self.assertIn("not a count of zero agents", document["notice"])
@@ -238,6 +243,9 @@ class NoAddressTests(unittest.TestCase):
         "caddy-all-agents.log",
         "caddy-no-agents.log",
         "malformed.log",
+        "caddy-drifted.log",
+        "caddy-llms-statuses.log",
+        "combined-referer.log",
     )
 
     def test_the_fixtures_really_do_contain_addresses(self):
@@ -268,8 +276,184 @@ class DiscoveryOrderTests(unittest.TestCase):
     def test_the_json_document_carries_the_same_question(self):
         analysis = analyse_fixtures(["caddy-sample.log"])
         document = json.loads(render_json_text(analysis))
-        self.assertTrue(document["discovery"]["/llms.txt"]["read"])
+        self.assertTrue(document["discovery"]["/llms.txt"]["served"])
         self.assertEqual(["GPTBot"], document["discovery"]["/llms.txt"]["agents"])
+
+
+class DiscoveryVerdictTests(unittest.TestCase):
+    """W1 F1: below 400 is not "read"."""
+
+    def test_a_2xx_is_read(self):
+        for status in (200, 204, 206):
+            with self.subTest(status=status):
+                verdict, served = discovery_verdict(Counter({status: 1}))
+                self.assertEqual("READ", verdict)
+                self.assertTrue(served)
+
+    def test_a_redirect_is_not_read(self):
+        verdict, served = discovery_verdict(Counter({302: 1}))
+        self.assertIn("REDIRECTED", verdict)
+        self.assertIn("302", verdict)
+        self.assertFalse(served)
+
+    def test_not_modified_is_read_with_the_reason(self):
+        verdict, served = discovery_verdict(Counter({304: 1}))
+        self.assertIn("NOT MODIFIED", verdict)
+        self.assertTrue(served)
+
+    def test_a_refusal_and_a_missing_file_are_not_read(self):
+        for status, expected in ((404, "NOT SERVED"), (410, "NOT SERVED"), (403, "NOT SERVED")):
+            with self.subTest(status=status):
+                verdict, served = discovery_verdict(Counter({status: 1}))
+                self.assertIn(expected, verdict)
+                self.assertFalse(served)
+
+    def test_no_response_recorded_is_not_read(self):
+        verdict, served = discovery_verdict(Counter({0: 1}))
+        self.assertIn("NO RESPONSE", verdict)
+        self.assertFalse(served)
+
+    def test_a_success_anywhere_wins_over_a_redirect(self):
+        verdict, served = discovery_verdict(Counter({302: 1, 200: 1}))
+        self.assertEqual("READ", verdict)
+        self.assertTrue(served)
+
+
+class DiscoveryAgreementTests(unittest.TestCase):
+    """W1 F2: the text and the JSON must not disagree about the same figure."""
+
+    def test_the_json_names_each_discovery_figure(self):
+        analysis = analyse_fixtures(["caddy-sample.log"])
+        document = json.loads(render_json_text(analysis))
+        robots = document["discovery"]["/robots.txt"]
+        self.assertEqual(4, robots["requests_from_all_clients"])
+        self.assertEqual(2, robots["named_agent_requests"])
+        self.assertEqual(["ClaudeBot", "GPTBot"], robots["agents"])
+        self.assertEqual({"200": 2}, robots["named_agent_statuses"])
+        self.assertEqual({"200": 4}, robots["statuses_from_all_clients"])
+        self.assertEqual("READ", robots["verdict"])
+        self.assertTrue(robots["served"])
+
+    def test_the_text_and_the_json_agree_on_the_named_agent_count(self):
+        analysis = analyse_fixtures(["caddy-sample.log"])
+        text = render_text(analysis)
+        document = json.loads(render_json_text(analysis))
+        for path in DISCOVERY_FILES:
+            with self.subTest(path=path):
+                listed = document["discovery"][path]["named_agent_requests"]
+                if listed:
+                    self.assertIn(f"{listed} request", text)
+
+    def test_a_redirected_llms_txt_does_not_read_as_read(self):
+        analysis = analyse_fixtures(["caddy-llms-statuses.log"])
+        text = render_text(analysis)
+        document = json.loads(render_json_text(analysis))
+        self.assertIn("REDIRECTED (302)", text)
+        self.assertNotIn("VERDICT: READ", text)
+        self.assertFalse(document["discovery"]["/llms.txt"]["served"])
+        self.assertIn("NOT MODIFIED", text)  # /robots.txt, 304
+        self.assertIn("REQUESTED BUT NOT SERVED", text)  # /sitemap.xml, 403
+
+
+class SelfDeclarationTests(unittest.TestCase):
+    """The site's own monitor must not be presented as somebody's agent."""
+
+    REAL = "real-findmynextbite-2026-09-21-1828Z.log"
+
+    def test_without_a_declaration_the_dominant_client_is_called_out(self):
+        analysis = analyse_fixtures([self.REAL])
+        text = render_text(analysis)
+        self.assertIn("17 of 21 requests (81.0%) came from one client", text)
+        self.assertIn("FindMyNextBiteMonitor/1.0", text)
+        self.assertIn("--self FindMyNextBiteMonitor", text)
+        self.assertIn("cannot tell whether that is your own monitoring", text)
+
+    def test_a_declaration_sets_the_client_aside_and_silences_the_warning(self):
+        analysis = analyse_fixtures([self.REAL], declarations=("FindMyNextBiteMonitor",))
+        text = unwrapped(render_text(analysis))
+        self.assertIn("Set aside — declared your own (--self)", text)
+        self.assertIn("17 FindMyNextBiteMonitor (15 path(s))", text)
+        self.assertNotIn("cannot tell whether that is your own monitoring", text)
+        self.assertEqual(17, analysis.by_category["declared_self"])
+        self.assertEqual(0, analysis.by_category[CATEGORY_UNKNOWN])
+        document = render_json(analysis)
+        self.assertEqual(["FindMyNextBiteMonitor"], document["declared_self"]["declarations"])
+        self.assertEqual(17, document["declared_self"]["matched"][0]["requests"])
+
+    def test_a_declaration_that_matches_nothing_is_reported(self):
+        analysis = analyse_fixtures([self.REAL], declarations=("NoSuchClient",))
+        text = unwrapped(render_text(analysis))
+        self.assertIn("--self matched nothing for: NoSuchClient", text)
+
+    def test_the_dominant_client_in_the_json_carries_its_note(self):
+        analysis = analyse_fixtures([self.REAL])
+        document = render_json(analysis)
+        self.assertEqual(17, document["dominant_client"]["requests"])
+        self.assertIn("cannot tell", document["dominant_client"]["note"])
+
+
+class WindowTests(unittest.TestCase):
+    """A short window must not read like a week."""
+
+    def test_a_short_window_is_reported_with_its_length(self):
+        analysis = analyse_fixtures(["real-findmynextbite-2026-09-21-1828Z.log"])
+        text = render_text(analysis)
+        self.assertIn("(6.8 minutes, 21 requests)", text)
+        document = render_json(analysis)
+        self.assertEqual(408, round(document["coverage"]["duration_seconds"]))
+        self.assertTrue(document["coverage"]["short_window"])
+
+    def test_a_longer_window_carries_no_thin_window_warning(self):
+        analysis = analyse_fixtures(["caddy-sample.log"])
+        self.assertGreater(analysis.coverage_seconds, 3600)
+        self.assertFalse(render_json(analysis)["coverage"]["short_window"])
+        self.assertNotIn("describe that window only", render_text(analysis))
+
+
+class DriftReportTests(unittest.TestCase):
+    """W1 F9 and W2: a changed format is named, never guessed at."""
+
+    def test_a_drifted_schema_refuses_and_explains(self):
+        analysis = analyse_fixtures(["caddy-drifted.log"])
+        self.assertEqual(STATE_NO_READABLE_LINES, analysis.state)
+        self.assertEqual(1, len(analysis.sources[0].diagnostics))
+        text = render_text(analysis)
+        self.assertIn("WARNING", text)
+        self.assertIn("request.uri", text)
+        self.assertIn("status", text)
+        self.assertIn("CANNOT ANSWER", text)
+        self.assertNotIn("Site-wide", text)
+
+    def test_a_partly_readable_source_is_flagged_at_the_top(self):
+        analysis = analyse_fixtures(["malformed.log"])
+        self.assertEqual(STATE_REPORTED, analysis.state)
+        self.assertIn("were not read as requests", analysis.sources[0].diagnostics[0])
+        text = render_text(analysis)
+        self.assertIn("WARNING", text)
+        self.assertIn("50%", text)
+
+    def test_json_carries_the_diagnostics(self):
+        analysis = analyse_fixtures(["caddy-drifted.log"])
+        document = json.loads(render_json_text(analysis))
+        self.assertTrue(document["sources"][0]["diagnostics"])
+
+
+class HostHistoryTests(unittest.TestCase):
+    """W1 F7: the tool must not assert a false present-tense fact about a real host."""
+
+    def test_no_state_claims_the_host_still_keeps_no_log(self):
+        # "If the web server keeps no access log" is a hypothetical and stays; a
+        # present-tense claim about this host would be false since 2026-09-21.
+        for name in ("empty.log", "caddy-no-agents.log", "caddy-drifted.log"):
+            with self.subTest(fixture=name):
+                analysis = analyse_fixtures([name])
+                for text in (render_text(analysis), render_json_text(analysis)):
+                    self.assertNotIn("findmynextbite.food keeps no", text)
+                    self.assertNotIn("findmynextbite.food writes no", text)
+
+    def test_the_history_is_stated_in_the_past_tense(self):
+        analysis = analyse_fixtures(["caddy-no-agents.log"])
+        self.assertIn("kept none until 2026-09-21", unwrapped(render_text(analysis)))
 
 
 if __name__ == "__main__":

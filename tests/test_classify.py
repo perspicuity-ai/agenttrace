@@ -4,9 +4,12 @@ import unittest
 
 from agenttrace.classify import (
     CATEGORY_BROWSER,
+    CATEGORY_LABELS,
     CATEGORY_NAMED_AGENT,
+    CATEGORY_ORDER,
     CATEGORY_OTHER_BOT,
     CATEGORY_SEARCH_CRAWLER,
+    CATEGORY_SELF,
     CATEGORY_UNKNOWN,
     NAMED_AI_AGENTS,
     classify,
@@ -131,6 +134,40 @@ class BucketTests(unittest.TestCase):
                 claim = classify(user_agent)
                 self.assertEqual(CATEGORY_UNKNOWN, claim.category)
                 self.assertIsNone(claim.agent)
+
+
+class DeclaredSelfTests(unittest.TestCase):
+    """--self is the operator's statement about their own client, and it wins."""
+
+    def test_a_declaration_overrides_even_a_named_agent_string(self):
+        claim = classify(NAMED_AGENT_STRINGS["GPTBot"], ["GPTBot"])
+        self.assertEqual(CATEGORY_SELF, claim.category)
+        self.assertEqual("GPTBot", claim.label)
+        self.assertIsNone(claim.agent)
+
+    def test_a_declaration_matches_case_insensitively_and_as_a_substring(self):
+        for token in ("findmynextbitemonitor", "FindMyNextBiteMonitor", "NextBite"):
+            with self.subTest(token=token):
+                claim = classify("FindMyNextBiteMonitor/1.0", [token])
+                self.assertEqual(CATEGORY_SELF, claim.category)
+                self.assertEqual(token, claim.label)
+
+    def test_an_empty_declaration_matches_nothing(self):
+        claim = classify("FindMyNextBiteMonitor/1.0", ["", "   "])
+        self.assertEqual(CATEGORY_OTHER_BOT, claim.category)
+
+    def test_without_a_declaration_the_taxonomy_is_unchanged(self):
+        self.assertEqual(CATEGORY_NAMED_AGENT, classify(NAMED_AGENT_STRINGS["GPTBot"]).category)
+
+    def test_a_site_monitor_is_counted_as_a_bot_not_an_unknown_client(self):
+        # Found on the first real log: 17 of 21 requests were the site's own monitor.
+        for user_agent in ("FindMyNextBiteMonitor/1.0", "Uptime-Monitor/2", "kube-probe/1.27"):
+            with self.subTest(user_agent=user_agent):
+                self.assertEqual(CATEGORY_OTHER_BOT, classify(user_agent).category)
+
+    def test_the_self_category_is_in_the_breakdown_and_labelled(self):
+        self.assertIn(CATEGORY_SELF, CATEGORY_ORDER)
+        self.assertIn(CATEGORY_SELF, CATEGORY_LABELS)
 
 
 if __name__ == "__main__":

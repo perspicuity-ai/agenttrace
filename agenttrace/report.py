@@ -3,11 +3,21 @@
 Two renderings of the same analysis: a text report for a person and a JSON document
 for a script. Both carry the claim boundary, and neither can carry a client address —
 the analysis only ever sees the fields :class:`agenttrace.parse.Entry` holds.
+
+Three honesty rules shape the report beyond the counts:
+
+* a client the operator declared as their own (``--self``) is set aside and never
+  presented as an agent or a bot claim;
+* when one undeclared client dominates the log, the report says so by name and says
+  that the tool cannot tell whether it is the site's own monitoring;
+* user-agent strings that matched no rule are shown with their counts, so
+  "unrecognised" is a starting point for a reader rather than a dead end.
 """
 
 from __future__ import annotations
 
 import json
+import re
 from collections import Counter
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -18,6 +28,8 @@ from .classify import (
     CATEGORY_NAMED_AGENT,
     CATEGORY_ORDER,
     CATEGORY_SEARCH_CRAWLER,
+    CATEGORY_SELF,
+    CATEGORY_UNKNOWN,
     NAMED_AI_AGENTS,
     Claim,
 )
@@ -28,6 +40,31 @@ STATE_NO_AGENT_TRAFFIC = "no_agent_traffic"
 STATE_NO_READABLE_LINES = "no_readable_lines"
 
 TOP_PATHS = 10
+TOP_CLIENTS = 5
+
+#: A window shorter than this gets a sentence saying the counts describe that window only.
+SHORT_WINDOW_SECONDS = 3600
+
+#: How much of a log one undeclared client must hold before the report calls it out.
+DOMINANCE_SHARE = 0.5
+DOMINANCE_MIN_REQUESTS = 5
+
+_CONTROL = re.compile(r"[\x00-\x1f\x7f]|\x1b\[[0-9;]*[A-Za-z]")
+
+
+def safe_client(text: str, limit: int = 60) -> str:
+    """Make a self-declared user-agent string safe to echo.
+
+    A user-agent is attacker-controlled text that lands in a terminal. Control
+    characters, escape sequences and newlines are removed, whitespace is collapsed, and
+    the result is truncated — the report shows what was claimed, not what it can do.
+    """
+
+    cleaned = _CONTROL.sub("", text or "")
+    cleaned = " ".join(cleaned.split())
+    if len(cleaned) > limit:
+        return cleaned[: limit - 1] + "…"
+    return cleaned or "(no user-agent)"
 
 
 @dataclass
@@ -39,15 +76,21 @@ class Source:
     lines_read: int = 0
     requests_read: int = 0
     lines_not_requests: int = 0
+    #: Plain sentences about lines this source could not read, and why.
+    diagnostics: list[str] = field(default_factory=list)
 
     @property
     def label(self) -> str:
         return self.fmt or "undecided"
 
+    @property
+    def unreadable_share(self) -> float:
+        return self.lines_not_requests / self.lines_read if self.lines_read else 0.0
+
 
 @dataclass
 class AgentRecord:
-    """One label: a named AI agent, a named search crawler, or a category."""
+    """One label: a named AI agent, a named search crawler, a category, or a declaration."""
 
     label: str
     category: str
@@ -80,17 +123,35 @@ class MissingPath:
     agents: set[str] = field(default_factory=set)
 
 
+@dataclass
+class DominantClient:
+    """An undeclared client holding most of the log."""
+
+    user_agent: str
+    requests: int
+    category: str
+
+    def share(self, total: int) -> float:
+        return self.requests / total if total else 0.0
+
+
 class Analysis:
     """Everything the report needs, accumulated in one pass."""
 
-    def __init__(self) -> None:
+    def __init__(self, declarations: tuple[str, ...] = ()) -> None:
+        self.declarations = tuple(declarations)
         self.sources: list[Source] = []
         self.requests = 0
         self.by_category: Counter = Counter()
-        self.by_label: dict[str, AgentRecord] = {}
+        #: Keyed by (category, label) so a declaration named like an agent cannot merge
+        #: with that agent's record.
+        self.by_label: dict[tuple[str, str], AgentRecord] = {}
         self.statuses: Counter = Counter()
         self.agent_paths: Counter = Counter()
         self.missing: dict[str, MissingPath] = {}
+        self.clients: Counter = Counter()
+        self.client_categories: dict[str, str] = {}
+        self.unrecognised: Counter = Counter()
         self.discovery: dict[str, dict] = {
             path: {"requests": 0, "agents": set(), "statuses": Counter()}
             for path in DISCOVERY_FILES
@@ -107,15 +168,21 @@ class Analysis:
         self.requests += 1
         self.by_category[claim.category] += 1
         self.statuses[entry.status] += 1
+        client = safe_client(entry.user_agent)
+        self.clients[client] += 1
+        self.client_categories.setdefault(client, claim.category)
+        if claim.category == CATEGORY_UNKNOWN:
+            self.unrecognised[client] += 1
         if self.first is None or entry.timestamp < self.first:
             self.first = entry.timestamp
         if self.last is None or entry.timestamp > self.last:
             self.last = entry.timestamp
 
-        record = self.by_label.get(claim.label)
+        key = (claim.category, claim.label)
+        record = self.by_label.get(key)
         if record is None:
             record = AgentRecord(label=claim.label, category=claim.category)
-            self.by_label[claim.label] = record
+            self.by_label[key] = record
         record.observe(entry)
 
         if entry.path.lower() in DISCOVERY_FILES:
@@ -147,9 +214,20 @@ class Analysis:
     def search_crawlers(self) -> list[AgentRecord]:
         return self._records(CATEGORY_SEARCH_CRAWLER)
 
+    @property
+    def declared_self(self) -> list[AgentRecord]:
+        return self._records(CATEGORY_SELF)
+
+    def unmatched_declarations(self) -> list[str]:
+        matched = {record.label for record in self.declared_self}
+        return [token for token in self.declarations if token not in matched]
+
     def _records(self, category: str) -> list[AgentRecord]:
         rows = [r for r in self.by_label.values() if r.category == category]
         return sorted(rows, key=lambda r: (-r.requests, r.label.lower()))
+
+    def record_for(self, label: str, category: str) -> AgentRecord | None:
+        return self.by_label.get((category, label))
 
     @property
     def named_agent_requests(self) -> int:
@@ -158,6 +236,33 @@ class Analysis:
     @property
     def agent_share(self) -> float:
         return self.named_agent_requests / self.requests if self.requests else 0.0
+
+    @property
+    def coverage_seconds(self) -> float | None:
+        if self.first is None or self.last is None:
+            return None
+        return (self.last - self.first).total_seconds()
+
+    @property
+    def unknown_clients(self) -> list[tuple[str, int]]:
+        """The user-agent strings that matched no rule, most requests first."""
+
+        return self.unrecognised.most_common(TOP_CLIENTS)
+
+    @property
+    def dominant_client(self) -> DominantClient | None:
+        """The busiest client that is neither a named agent nor declared as the site's own."""
+
+        if self.requests < DOMINANCE_MIN_REQUESTS:
+            return None
+        for client, count in self.clients.most_common():
+            category = self.client_categories.get(client, CATEGORY_UNKNOWN)
+            if category in (CATEGORY_NAMED_AGENT, CATEGORY_SELF):
+                continue
+            if count / self.requests < DOMINANCE_SHARE:
+                return None
+            return DominantClient(user_agent=client, requests=count, category=category)
+        return None
 
     @property
     def state(self) -> str:
@@ -183,6 +288,23 @@ def _percent(part: int, whole: int) -> str:
     return f"{100.0 * part / whole:.1f}%"
 
 
+def _duration(seconds: float | None) -> str:
+    if seconds is None:
+        return "unknown"
+    if seconds < 120:
+        return f"{int(seconds)} seconds"
+    if seconds < 7200:
+        return f"{seconds / 60:.1f} minutes"
+    if seconds < 172800:
+        return f"{seconds / 3600:.1f} hours"
+    return f"{seconds / 86400:.1f} days"
+
+
+def _mix(statuses: Counter) -> str:
+    return " ".join(f"{code}:{count}" for code, count in sorted(
+        statuses.items(), key=lambda item: (-item[1], item[0])))
+
+
 # -- text rendering -----------------------------------------------------------
 
 
@@ -199,18 +321,24 @@ def render_text(analysis: Analysis) -> str:
             f"{source.lines_not_requests} not read as requests"
         )
     if analysis.first and analysis.last:
-        add(f"coverage  {_iso(analysis.first)} .. {_iso(analysis.last)}  ({analysis.requests} requests)")
+        add(
+            f"coverage  {_iso(analysis.first)} .. {_iso(analysis.last)}  "
+            f"({_duration(analysis.coverage_seconds)}, {analysis.requests} requests)"
+        )
     add("")
 
     if analysis.state == STATE_NO_READABLE_LINES:
-        return "\n".join(lines + _no_readable_lines(analysis))
-    if analysis.state == STATE_NO_AGENT_TRAFFIC:
         lines.extend(_wrap(CLAIM_BOUNDARY))
         add("")
-        return "\n".join(lines + _no_agent_traffic(analysis))
+        return "\n".join(lines + _source_warnings(analysis) + _no_readable_lines(analysis))
 
     lines.extend(_wrap(CLAIM_BOUNDARY))
     add("")
+    lines.extend(_source_warnings(analysis))
+    lines.extend(_dominance_note(analysis))
+    if analysis.state == STATE_NO_AGENT_TRAFFIC:
+        return "\n".join(lines + _no_agent_traffic(analysis))
+
     add("Is /llms.txt being read?")
     add("")
     add(f"  VERDICT: {_discovery_line(analysis, DISCOVERY_FILES[0])}")
@@ -224,15 +352,46 @@ def render_text(analysis: Analysis) -> str:
     add(f"Named AI agents — {len(analysis.named_agents)} of 12 seen")
     add("")
     lines.extend(_agent_table(analysis.named_agents))
-    missing_agents = _not_seen(analysis)
-    if missing_agents:
-        lines.extend(_wrap(f"  not seen in this log: {', '.join(missing_agents)}", indent="  "))
+    not_seen = _not_seen(analysis)
+    if not_seen:
+        lines.extend(_wrap(f"  not seen in this log: {', '.join(not_seen)}", indent="  "))
     add("")
 
     if analysis.search_crawlers:
         add("Search crawlers seen")
         add("")
         lines.extend(_agent_table(analysis.search_crawlers))
+        add("")
+
+    if analysis.declared_self:
+        add("Set aside — declared your own (--self)")
+        add("")
+        for record in analysis.declared_self:
+            add(f"  {record.requests:>8}  {safe_client(record.label)}  "
+                f"({record.unique_paths} path(s))")
+        add("")
+    unmatched = analysis.unmatched_declarations()
+    if unmatched:
+        lines.extend(_wrap(
+            "  --self matched nothing for: "
+            + ", ".join(safe_client(token) for token in unmatched)
+            + " — check the spelling; a declaration that matches nothing sets nothing aside.",
+            indent="  ",
+        ))
+        add("")
+
+    unknown = analysis.unknown_clients
+    if unknown:
+        add(f"Unrecognised user agents (top {TOP_CLIENTS})")
+        add("")
+        for client, count in unknown:
+            add(f"  {count:>8}  {client}")
+        lines.extend(_wrap(
+            "  These matched no rule and no --self declaration. Read them before drawing a "
+            "conclusion from the counts above: a site's own monitor, a status checker or a "
+            "client library lands here.",
+            indent="  ",
+        ))
         add("")
 
     add("Site-wide")
@@ -242,7 +401,7 @@ def render_text(analysis: Analysis) -> str:
         count = analysis.by_category[category]
         if category == CATEGORY_NAMED_AGENT:
             add(f"  claimed by a named AI agent        {count:>6}  ({_percent(count, analysis.requests)})")
-        else:
+        elif count or category != CATEGORY_SELF:
             add(f"  {CATEGORY_LABELS[category]:<33}{count:>6}  ({_percent(count, analysis.requests)})")
     add("")
 
@@ -263,7 +422,7 @@ def render_text(analysis: Analysis) -> str:
     if analysis.missing:
         for item in sorted(analysis.missing.values(), key=lambda m: (-m.requests, m.path)):
             add(f"  {item.requests:>4}  {item.path}  "
-                f"({analysis.status_mix(item.statuses)}; {', '.join(sorted(item.agents))})")
+                f"({_mix(item.statuses)}; {', '.join(sorted(item.agents))})")
     else:
         add("  none — every path a named AI agent asked for was served")
     add("")
@@ -275,28 +434,90 @@ def render_text(analysis: Analysis) -> str:
     return "\n".join(lines)
 
 
-def _statuses_of(analysis: Analysis, name: str, path: str) -> Counter:
-    record = analysis.by_label.get(name)
-    if record is None:
-        return Counter()
-    return record.discovery.get(path, Counter())
+def _source_warnings(analysis: Analysis) -> list[str]:
+    rows: list[str] = []
+    for source in analysis.sources:
+        for sentence in source.diagnostics:
+            rows.extend(_wrap(f"  WARNING  {source.name}: {sentence}", indent="  "))
+    if rows:
+        rows.append("")
+    return rows
+
+
+def _dominance_note(analysis: Analysis) -> list[str]:
+    """Nothing at all unless one undeclared client holds most of the log."""
+
+    dominant = analysis.dominant_client
+    if dominant is None:
+        return []
+    first_word = dominant.user_agent.split(" ")[0].split("/")[0]
+    rows = [
+        f"  {dominant.requests} of {analysis.requests} requests "
+        f"({_percent(dominant.requests, analysis.requests)}) came from one client: "
+        f"{dominant.user_agent}",
+        "",
+    ]
+    rows.extend(_wrap(
+        "  The tool cannot tell whether that is your own monitoring, a status checker or "
+        "somebody else's bot. If it is yours, rerun with "
+        f"--self {first_word} and its requests are set aside from the agent and bot counts; "
+        "until then, read the totals below knowing that one client holds most of this log.",
+        indent="  ",
+    ))
+    rows.append("")
+    return rows
+
+
+def discovery_verdict(statuses: Counter) -> tuple[str, bool]:
+    """What a set of statuses says about whether the file was served.
+
+    Below 400 is not "read": a 302 to a missing file is not the file, and a 0 means no
+    response was recorded at all. Only 2xx counts as served; 304 counts as read because
+    the client's copy was current, and it says so.
+    """
+
+    codes = set(statuses)
+    if any(200 <= code < 300 for code in codes):
+        return "READ", True
+    if 304 in codes:
+        return "READ (NOT MODIFIED — the client already held a copy)", True
+    if any(300 <= code < 400 for code in codes):
+        redirects = ", ".join(str(code) for code in sorted(c for c in codes if 300 <= c < 400))
+        return f"REDIRECTED ({redirects}) — the file itself was not served at this path", False
+    if 0 in codes:
+        return "NO RESPONSE RECORDED — the request produced no status", False
+    return "REQUESTED BUT NOT SERVED", False
+
+
+def _named_agent_statuses(analysis: Analysis, path: str) -> dict[str, Counter]:
+    return {
+        name: _statuses_of(analysis, name, path)
+        for name in sorted(analysis.discovery[path]["agents"])
+    }
 
 
 def _discovery_line(analysis: Analysis, path: str) -> str:
     """One sentence per discovery file: read, not requested, or requested and refused."""
 
-    seen = analysis.discovery[path]
-    names = sorted(seen["agents"])
-    if not names:
+    counts = _named_agent_statuses(analysis, path)
+    if not counts:
         return "NOT REQUESTED — no named AI agent asked for this path in this log"
-    counts = {name: _statuses_of(analysis, name, path) for name in names}
-    total = sum(counter.total() for counter in counts.values())
-    served = any(code < 400 for counter in counts.values() for code in counter)
+    combined: Counter = Counter()
+    for counter in counts.values():
+        combined.update(counter)
+    verdict, _served = discovery_verdict(combined)
+    total = combined.total()
     requests = "request" if total == 1 else "requests"
-    agents = "agent" if len(names) == 1 else "agents"
-    detail = ", ".join(f"{name} ({analysis.status_mix(counts[name])})" for name in names)
-    verdict = "READ" if served else "REQUESTED BUT NOT SERVED"
-    return f"{verdict} — {total} {requests} from {len(names)} named AI {agents}: {detail}"
+    agents = "agent" if len(counts) == 1 else "agents"
+    detail = ", ".join(f"{name} ({_mix(counts[name])})" for name in counts)
+    return f"{verdict} — {total} {requests} from {len(counts)} named AI {agents}: {detail}"
+
+
+def _statuses_of(analysis: Analysis, name: str, path: str) -> Counter:
+    record = analysis.record_for(name, CATEGORY_NAMED_AGENT)
+    if record is None:
+        return Counter()
+    return record.discovery.get(path, Counter())
 
 
 def _not_seen(analysis: Analysis) -> list[str]:
@@ -321,11 +542,6 @@ def _agent_table(records: list[AgentRecord]) -> list[str]:
     return rows
 
 
-def _mix(statuses: Counter) -> str:
-    return " ".join(f"{code}:{count}" for code, count in sorted(
-        statuses.items(), key=lambda item: (-item[1], item[0])))
-
-
 def _no_agent_traffic(analysis: Analysis) -> list[str]:
     rows = [
         "NO NAMED AI AGENT TRAFFIC IN THIS LOG",
@@ -338,10 +554,13 @@ def _no_agent_traffic(analysis: Analysis) -> list[str]:
     ))
     rows.append("")
     rows.extend(_wrap(
-        f"{TOOL_NAME} was written for a host in that state — {NO_LOG_HOST} keeps no access log — "
-        f"so on that host this result says nothing about agents until logging is switched on. "
-        f"README.md shows how to switch it on in Caddy."
+        f"{TOOL_NAME} was written for a host that kept none — {NO_LOG_HOST} kept none until "
+        f"2026-09-21 — so a zero from a host with logging switched off says nothing about "
+        f"agents. README.md shows how to switch it on in Caddy."
     ))
+    if analysis.coverage_seconds is not None and analysis.coverage_seconds < SHORT_WINDOW_SECONDS:
+        rows.append("")
+        rows.extend(_short_window_note(analysis))
     rows.append("")
     rows.append("  no named AI agent requested /llms.txt, /robots.txt or /sitemap.xml in this log")
     rows.append("")
@@ -349,12 +568,28 @@ def _no_agent_traffic(analysis: Analysis) -> list[str]:
     for category in CATEGORY_ORDER:
         count = analysis.by_category[category]
         if count:
-            rows.append(f"    {CATEGORY_LABELS[category]:<20}{count:>6}  ({_percent(count, analysis.requests)})")
+            rows.append(
+                f"    {CATEGORY_LABELS[category]:<20}{count:>6}  "
+                f"({_percent(count, analysis.requests)})"
+            )
+    unknown = analysis.unknown_clients
+    if unknown:
+        rows.append("")
+        rows.append(f"  unrecognised user agents (top {TOP_CLIENTS})")
+        for client, count in unknown:
+            rows.append(f"    {count:>6}  {client}")
     rows.append("")
     rows.extend(_wrap(
         "Only requests that reached this server and were written to this log are counted."
     ))
     return rows
+
+
+def _short_window_note(analysis: Analysis) -> list[str]:
+    return _wrap(
+        f"This window is {_duration(analysis.coverage_seconds)} long: the counts describe that "
+        f"window only, not the site's history."
+    )
 
 
 def _no_readable_lines(analysis: Analysis) -> list[str]:
@@ -369,9 +604,15 @@ def _no_readable_lines(analysis: Analysis) -> list[str]:
     rows.append("")
     rows.extend(_wrap(
         f"If the web server keeps no access log, there is nothing to trace. {TOOL_NAME} was "
-        f"written for a host in that state — {NO_LOG_HOST} writes no access log — and it cannot "
-        f"answer its own question there until logging is switched on. README.md shows how to "
-        f"switch it on in Caddy."
+        f"written for a host in that state — {NO_LOG_HOST} kept none until 2026-09-21 — and a "
+        f"host with no log cannot be analysed until logging is switched on. README.md shows how "
+        f"to switch it on in Caddy."
+    ))
+    rows.append("")
+    rows.extend(_wrap(
+        "If the server does write a log, the format may have changed: this tool reads Caddy JSON "
+        "and the common/combined format, and it refuses rather than guesses. A third format is a "
+        "recorded decision, not a configuration file."
     ))
     return rows
 
@@ -393,6 +634,36 @@ def _wrap(text: str, indent: str = "", width: int = 92) -> list[str]:
 
 
 # -- JSON rendering -----------------------------------------------------------
+
+
+def _discovery_json(analysis: Analysis, path: str, seen: dict) -> dict:
+    """One discovery file in the JSON document, with every figure named.
+
+    ``requests_from_all_clients`` and ``named_agent_requests`` are different numbers on
+    purpose: the first counts every client, the second only the twelve named agents. W1
+    found the earlier shape letting a reader take the first for the second.
+    """
+
+    named = _merge(_named_agent_statuses(analysis, path).values())
+    verdict, served = discovery_verdict(named) if seen["agents"] else ("NOT REQUESTED", False)
+    return {
+        "agents": sorted(seen["agents"]),
+        "named_agent_requests": named.total(),
+        "named_agent_statuses": {str(code): count for code, count in sorted(named.items())},
+        "requests_from_all_clients": seen["requests"],
+        "statuses_from_all_clients": {
+            str(code): count for code, count in sorted(seen["statuses"].items())
+        },
+        "verdict": verdict,
+        "served": served,
+    }
+
+
+def _merge(counters) -> Counter:
+    merged: Counter = Counter()
+    for counter in counters:
+        merged.update(counter)
+    return merged
 
 
 def _record_json(record: AgentRecord) -> dict:
@@ -417,6 +688,7 @@ def _record_json(record: AgentRecord) -> dict:
 
 def render_json(analysis: Analysis) -> dict:
     state = analysis.state
+    dominant = analysis.dominant_client
     document: dict = {
         "tool": TOOL_NAME,
         "version": __version__,
@@ -429,12 +701,18 @@ def render_json(analysis: Analysis) -> dict:
                 "lines_read": source.lines_read,
                 "requests_read": source.requests_read,
                 "lines_not_requests": source.lines_not_requests,
+                "diagnostics": list(source.diagnostics),
             }
             for source in analysis.sources
         ],
         "coverage": {
             "first_seen": _iso(analysis.first),
             "last_seen": _iso(analysis.last),
+            "duration_seconds": analysis.coverage_seconds,
+            "short_window": (
+                analysis.coverage_seconds is not None
+                and analysis.coverage_seconds < SHORT_WINDOW_SECONDS
+            ),
         },
         "totals": {
             "requests": analysis.requests,
@@ -447,13 +725,31 @@ def render_json(analysis: Analysis) -> dict:
         "named_agents": [_record_json(record) for record in analysis.named_agents],
         "named_agents_not_seen": _not_seen(analysis),
         "search_crawlers": [_record_json(record) for record in analysis.search_crawlers],
-        "discovery": {
-            path: {
-                "requests": seen["requests"],
-                "agents": sorted(seen["agents"]),
-                "statuses": {str(code): count for code, count in sorted(seen["statuses"].items())},
-                "read": bool(seen["agents"]) and any(code < 400 for code in seen["statuses"]),
+        "declared_self": {
+            "declarations": list(analysis.declarations),
+            "matched": [_record_json(record) for record in analysis.declared_self],
+            "unmatched": analysis.unmatched_declarations(),
+        },
+        "unrecognised_clients": [
+            {"user_agent": client, "requests": count}
+            for client, count in analysis.unknown_clients
+        ],
+        "dominant_client": (
+            {
+                "user_agent": dominant.user_agent,
+                "requests": dominant.requests,
+                "share": round(dominant.share(analysis.requests), 6),
+                "category": dominant.category,
+                "note": (
+                    "The tool cannot tell whether this is the site's own monitoring. Declare it "
+                    "with --self if it is."
+                ),
             }
+            if dominant
+            else None
+        ),
+        "discovery": {
+            path: _discovery_json(analysis, path, seen)
             for path, seen in analysis.discovery.items()
         },
         "top_agent_paths": [
@@ -474,14 +770,14 @@ def render_json(analysis: Analysis) -> dict:
         document["notice"] = (
             "No request in this log claimed to be one of the 12 named AI agents. This is not a "
             "report of zero agent activity: the server may not be logging requests at all. "
-            f"{NO_LOG_HOST} keeps no access log, so this result says nothing there until logging "
-            "is switched on."
+            f"{NO_LOG_HOST} kept no access log until 2026-09-21, so a zero from a host in that "
+            "state says nothing about agents."
         )
     elif state == STATE_NO_READABLE_LINES:
         document["notice"] = (
             "Nothing in the input could be read as an access log line, so no report was "
             "produced. This is not a count of zero agents. A server that keeps no access log "
-            f"(for example {NO_LOG_HOST}) cannot be analysed at all."
+            f"({NO_LOG_HOST} kept none until 2026-09-21) cannot be analysed at all."
         )
     return document
 

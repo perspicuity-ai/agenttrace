@@ -15,12 +15,16 @@ def fixture(name: str) -> Path:
     return FIXTURES / name
 
 
-def analyse_fixtures(names: Iterable[str], forced_format: str | None = None) -> Analysis:
+def analyse_fixtures(
+    names: Iterable[str],
+    forced_format: str | None = None,
+    declarations: tuple[str, ...] = (),
+) -> Analysis:
     """Run the real reader over fixture files, the way the command line does."""
 
-    analysis = Analysis()
+    analysis = Analysis(declarations)
     for name in names:
         path = fixture(name)
         with open(path, "r", encoding="utf-8", errors="replace") as stream:
-            analyse_stream(str(path), stream, forced_format, analysis)
+            analyse_stream(str(path), stream, forced_format, analysis, declarations)
     return analysis

@@ -1,0 +1,3 @@
+203.0.113.80 - - [19/Sep/2026:06:00:00 +0000] "GET /robots.txt HTTP/1.1" 200 219 "https://duckduckgo.com/"
+203.0.113.81 - - [19/Sep/2026:06:00:05 +0000] "GET /llms.txt HTTP/1.1" 200 217 "Mozilla/5.0 (compatible; GPTBot/1.1; +https://openai.com/gptbot)"
+203.0.113.82 - - [19/Sep/2026:06:00:10 +0000] "GET /about HTTP/1.1" 200 3320

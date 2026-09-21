@@ -8,10 +8,12 @@ from agenttrace.parse import (
     FORMAT_CADDY,
     FORMAT_COMBINED,
     combined_timestamp,
+    explain,
     parse_caddy_line,
     parse_combined_line,
     parse_line,
     path_of,
+    sniff,
     sniff_format,
 )
 from tests.support import fixture
@@ -192,6 +194,80 @@ class FixtureLineTests(unittest.TestCase):
         entries = [parse_line(line, FORMAT_COMBINED)[0] for line in lines]
         self.assertEqual(4, len(entries))
         self.assertTrue(all(entry.user_agent == "" for entry in entries))
+
+
+class CombinedVariantTests(unittest.TestCase):
+    """Shapes real servers write that are not the textbook combined line."""
+
+    def test_one_trailing_field_that_is_a_referer_is_not_a_user_agent(self):
+        line = ('1.1.1.1 - - [19/Sep/2026:06:00:00 +0000] "GET /robots.txt HTTP/1.1" 200 219 '
+                '"https://duckduckgo.com/"')
+        entry = parse_combined_line(line)
+        self.assertIsNotNone(entry)
+        self.assertEqual("", entry.user_agent)
+
+    def test_one_trailing_field_that_is_a_user_agent_is_read(self):
+        line = ('1.1.1.1 - - [19/Sep/2026:06:00:00 +0000] "GET /llms.txt HTTP/1.1" 200 219 '
+                '"Mozilla/5.0 (compatible; GPTBot/1.1)"')
+        entry = parse_combined_line(line)
+        self.assertIsNotNone(entry)
+        self.assertEqual("Mozilla/5.0 (compatible; GPTBot/1.1)", entry.user_agent)
+
+    def test_a_vhost_prefixed_line_parses(self):
+        line = ('findmynextbite.food:443 1.1.1.1 - - [19/Sep/2026:06:00:00 +0000] '
+                '"GET / HTTP/1.1" 200 5123 "-" "curl/8.4.0"')
+        entry = parse_combined_line(line)
+        self.assertIsNotNone(entry)
+        self.assertEqual("/", entry.path)
+        self.assertEqual("curl/8.4.0", entry.user_agent)
+
+    def test_a_target_with_no_path_is_not_a_request(self):
+        # Inventing "/" would report a page the server never logged.
+        self.assertIsNone(parse_combined_line('1.1.1.1 - - [19/Sep/2026:06:00:00 +0000] "/a" 200 1'))
+
+
+class StatusRangeTests(unittest.TestCase):
+    def test_a_status_outside_the_protocol_is_not_a_request(self):
+        for status in (999, 1000, -1, 42, "999"):
+            with self.subTest(status=status):
+                line = ('1.1.1.1 - - [19/Sep/2026:06:00:00 +0000] "GET / HTTP/1.1" '
+                        f'{status} 1 "-" "curl/8.4.0"')
+                self.assertIsNone(parse_combined_line(line))
+                record = {"ts": 1790015282.4, "status": status,
+                          "request": {"uri": "/", "method": "GET", "headers": {}}}
+                self.assertIsNone(parse_caddy_line(json.dumps(record)))
+
+    def test_zero_is_kept_as_no_response_rather_than_dropped(self):
+        record = {"ts": 1790015282.4, "status": 0,
+                  "request": {"uri": "/", "method": "GET", "headers": {"User-Agent": ["curl/8.4.0"]}}}
+        entry = parse_caddy_line(json.dumps(record))
+        self.assertIsNotNone(entry)
+        self.assertEqual(0, entry.status)
+
+
+class DriftExplanationTests(unittest.TestCase):
+    """A changed schema must produce a specific reason, not a shrug."""
+
+    def test_a_renamed_caddy_field_is_explained(self):
+        lines = read_lines("caddy-drifted.log")
+        evidence = sniff(lines)
+        self.assertIsNone(evidence.fmt)
+        self.assertEqual(2, evidence.json_objects)
+        self.assertIn("path", evidence.request_keys)
+        sentence = explain(evidence)
+        self.assertIn("JSON objects", sentence)
+        self.assertIn("request.uri", sentence)
+        self.assertIn("status", sentence)
+
+    def test_prose_is_explained_by_showing_it(self):
+        evidence = sniff(["this line is not an access log entry at all"])
+        self.assertIsNone(evidence.fmt)
+        self.assertIn("this line is not an access log entry at all", explain(evidence))
+
+    def test_an_empty_source_says_so(self):
+        evidence = sniff(["", "   "])
+        self.assertIsNone(evidence.fmt)
+        self.assertIn("no non-blank line", explain(evidence))
 
 
 if __name__ == "__main__":

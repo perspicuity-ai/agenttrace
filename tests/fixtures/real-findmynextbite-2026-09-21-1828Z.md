@@ -8,7 +8,7 @@ what was actually done to the bytes is recorded here.
 | | |
 | --- | --- |
 | Source | `findmynextbite.food`, Caddy JSON access log (`/var/log/caddy/findmynextbite-access.log` on the host) |
-| Window | 2026-09-21T18:28:02Z → 2026-09-21T18:34:50Z — 408 seconds |
+| Window | 2026-09-21T18:28:02Z → 2026-09-21T18:34:50Z — 408 seconds (408.36 by the timestamps) |
 | Extracted | 2026-09-21, copied from the host by David; the working copy stayed in `var/`, which is gitignored and not committed |
 | Entries | 21, all Caddy JSON access lines, one format, no transformation of field names or values beyond the redaction below |
 | First read by this tool | 2026-09-21, W3: 21 of 21 lines read as requests, format detected as `caddy` with no flag |

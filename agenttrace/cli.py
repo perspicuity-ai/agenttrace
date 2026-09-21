@@ -20,11 +20,18 @@ import argparse
 import glob
 import os
 import sys
-from typing import Iterator, TextIO
+from typing import Iterator, Sequence, TextIO
 
 from . import TOOL_NAME, __version__
 from .classify import classify
-from .parse import FORMATS, parse_line, sniff_format
+from .parse import (
+    DRIFT_WARN_MIN_LINES,
+    DRIFT_WARN_SHARE,
+    FORMATS,
+    explain,
+    parse_line,
+    sniff,
+)
 from .report import (
     STATE_NO_READABLE_LINES,
     Analysis,
@@ -81,6 +88,18 @@ def build_parser() -> argparse.ArgumentParser:
         help="override format detection (caddy JSON or common/combined)",
     )
     parser.add_argument(
+        "--self",
+        action="append",
+        default=[],
+        metavar="TOKEN",
+        dest="self_tokens",
+        help=(
+            "declare a user-agent substring as your own site's client (for example your "
+            "monitor); repeatable. Declared requests are set aside from the agent and bot "
+            "counts instead of being presented as somebody's agent"
+        ),
+    )
+    parser.add_argument(
         "--json",
         action="store_true",
         dest="as_json",
@@ -121,8 +140,6 @@ def expand_targets(arguments: list[str]) -> list[tuple[str, str]]:
                     )
                 add("file", match, os.path.abspath(match))
             continue
-        if not os.path.exists(argument):
-            raise InputError(f"no such file: {argument!r}")
         if os.path.isdir(argument):
             raise InputError(
                 f"{argument!r} is a directory; name the log files or use a glob such as "
@@ -138,7 +155,11 @@ def iter_lines(stream: TextIO) -> Iterator[str]:
 
 
 def analyse_stream(
-    name: str, stream: TextIO, forced_format: str | None, analysis: Analysis
+    name: str,
+    stream: TextIO,
+    forced_format: str | None,
+    analysis: Analysis,
+    declarations: Sequence[str] = (),
 ) -> Source:
     """Read one source into *analysis*, deciding its format from its own lines."""
 
@@ -150,7 +171,8 @@ def analyse_stream(
         sample.append(line)
         if len(sample) >= SNIFF_LINES:
             break
-    fmt = forced_format or sniff_format(sample)
+    evidence = sniff(sample)
+    fmt = forced_format or evidence.fmt
     source.fmt = fmt
 
     def handle(line: str) -> None:
@@ -162,15 +184,40 @@ def analyse_stream(
             source.lines_not_requests += 1
             return
         source.requests_read += 1
-        analysis.add(entry, classify(entry.user_agent))
+        analysis.add(entry, classify(entry.user_agent, declarations))
 
     for line in sample:
         handle(line)
     for line in lines:
         handle(line)
 
+    source.diagnostics = _diagnostics(source, evidence, forced_format)
     analysis.add_source(source)
     return source
+
+
+def _diagnostics(source: Source, evidence, forced_format: str | None) -> list[str]:
+    """Plain sentences about what this source could not be read as, and why.
+
+    Two different findings, kept apart: nothing here is an access log at all, or a
+    recognised format that has partly stopped matching. The second is the dangerous one,
+    because a report built from the lines that still parse looks normal.
+    """
+
+    if source.lines_not_requests == 0:
+        return []
+    expected = f" (--format {forced_format} was given)" if forced_format else ""
+    if source.requests_read == 0:
+        return [f"{explain(evidence)}{expected}"]
+    share = source.unreadable_share
+    if share >= DRIFT_WARN_SHARE and source.lines_not_requests >= DRIFT_WARN_MIN_LINES:
+        return [
+            f"{source.lines_not_requests} of {source.lines_read} lines "
+            f"({share * 100:.0f}%) were not read as requests{expected}. The counts below come "
+            f"only from the lines that were read; if the server's log format has changed, "
+            f"they are incomplete. {explain(evidence)}"
+        ]
+    return []
 
 
 def run(argv: list[str] | None = None) -> int:
@@ -191,18 +238,26 @@ def run(argv: list[str] | None = None) -> int:
     if args.stdin:
         targets.insert(0, ("stdin", "<stdin>"))
 
-    analysis = Analysis()
+    declarations = tuple(token for token in (args.self_tokens or []) if token.strip())
+    analysis = Analysis(declarations)
+    unreadable = False
     for kind, name in targets:
         try:
             if kind == "stdin":
-                analyse_stream(name, sys.stdin, args.format, analysis)
+                analyse_stream(name, sys.stdin, args.format, analysis, declarations)
             else:
                 with open(name, "r", encoding="utf-8", errors="replace") as stream:
-                    analyse_stream(name, stream, args.format, analysis)
+                    analyse_stream(name, stream, args.format, analysis, declarations)
         except OSError as error:
-            print(f"{TOOL_NAME}: cannot read {name}: {error.strerror or error}", file=sys.stderr)
-            print(f"{TOOL_NAME}: no report produced.", file=sys.stderr)
-            return 1
+            # One unreadable source does not throw away the others: the report says what
+            # it could not read, and the exit code still reports the failure.
+            unreadable = True
+            reason = error.strerror or str(error)
+            print(f"{TOOL_NAME}: cannot read {name}: {reason}", file=sys.stderr)
+            analysis.add_source(Source(
+                name=name, fmt=None,
+                diagnostics=[f"cannot read this source: {reason}"],
+            ))
 
     output = render_json_text(analysis) if args.as_json else render_text(analysis) + "\n"
     try:
@@ -213,6 +268,8 @@ def run(argv: list[str] | None = None) -> int:
             sys.stdout.close()
         finally:
             return 0
+    if unreadable:
+        return 1
     return 2 if analysis.state == STATE_NO_READABLE_LINES else 0
 
 
