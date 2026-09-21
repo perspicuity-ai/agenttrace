@@ -8,11 +8,14 @@ State at 2026-09-21, after the first real log was read. The units and their stat
 
 ## Waiting on the principal
 
-- **An untouched, week-long window of the host's log.** The windows so far (408 and 510 seconds)
-  are parser evidence and a record of what happened while somebody was at the keyboard: no
-  external agent appeared, and the one `GPTBot` line was the operator's own test. A week nobody
-  is touching is what turns W4 into a finding about agent traffic. Owner: David, at the
-  2026-09-28 checkpoint.
+- **An untouched, week-long window of the host's log** — the one outstanding obligation, kept by
+  `next_check: 2026-09-28`. The windows so far (408 and 510 seconds) are parser evidence and a
+  record of what happened while somebody was at the keyboard: no external agent appeared, and the
+  one `GPTBot` line was the operator's own test. Owner: David.
+- **The two 404s the first window surfaced** (`GET /foods/impossible-beef/` and the malformed
+  `GET /foods//`, both from FMNB's own monitor) are Find My Next Bite's, not this project's.
+  Reported to David; whether they go on that project's board is his call. Nothing here fixes
+  another project's health check.
 
 ## Blocked on the release word
 
@@ -21,9 +24,8 @@ State at 2026-09-21, after the first real log was read. The units and their stat
 
 ## Next by the plan
 
-- **W4's finding stands corrected:** zero external AI agents in the 510-second window, and the
-  only named-agent line in it is the operator's own synthetic `GPTBot` request. Recorded at
-  RECORD.md revision 7 with the earlier text preserved.
+- **Nothing until the checkpoint.** W1–W4 are delivered and accepted (RECORD.md revision 8), and
+  every result in the scope is accounted for there. The next act is R8 at 2026-09-28.
 - **The next extract must be one nobody is touching.** Enabling the logging produced the only
   notable entry in the first observation; repeating that would repeat the artefact.
 

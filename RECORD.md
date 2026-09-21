@@ -1,15 +1,14 @@
 ---
 format: perspicuity-work/1
 id: at-project
-revision: 7
+revision: 8
 skill_version: 0.5.0
 updated: 2026-09-21
 created_at: "2026-09-21T11:48:05-06:00"
-updated_at: "2026-09-21T13:40:00-06:00"
+updated_at: "2026-09-21T13:22:00-06:00"
 record_status: open
-work_status: in_review
+work_status: accepted
 next_check: 2026-09-28
-review_due: 2026-09-28
 ---
 
 # Agenttrace
@@ -32,15 +31,17 @@ Decision: `selected` — David ratified the recommended course B1-amended and gr
 
 Work scope: units W1–W4 as registered in revision 3 — W1 an independent review of the artefact, W2 format-drift diagnostics and the unrecognised-format policy, W3 verification against a real access log, W4 the first real-host finding — plus restoring the real project checks in `scripts/check-project.sh`, which the propagated process documents replaced with a deliberately failing stub.
 
-Review due: 2026-09-28 — the fallback checkpoint for the outstanding observation in the Review table: a longer extract from the host, which would turn W4's 408-second note into a finding about agent traffic. The owner is David; if no longer extract exists by then, Quill re-asks rather than letting the question lapse.
+Review due: 2026-09-28 — the one outstanding obligation, kept because the delivery is accepted without the later observation being satisfied. David pulls a week-long extract that nobody was touching, per R8; Quill reads it against the same criteria. The record stays open: closing it now would drop the only check that can still change W4.
 
-Work: W1, W2, W3 and W4 are delivered and their evidence is in Act. W1: Rook's independent review of `c040601`, with the hand-count reproduced, the two promises attacked and eleven findings, none a stop condition. W2: the amended unit delivered at `6785c26` — the eleven findings answered, the drift policy, honest discovery verdicts, `--self`, the dominance line, unrecognised-client visibility and window honesty — 140 offline tests, `make ci` exit 0. W3: the first real log read, hand-counted, and its extract committed redacted under the registered rules. W4: the finding recorded, thin, with its window and its limits stated.
+Work: W1, W2, W3 and W4 are **delivered and accepted** by David on 2026-09-21, on the basis of revision 7 (`554d4ff`, reformatted at `9f1ca7a`, including the W4 correction he supplied). Their evidence is in Act, and every result in the work scope is accounted for below it. This revision records the acceptance and the commitment accounting; nothing else changed. W1: Rook's independent review of `c040601`, with the hand-count reproduced, the two promises attacked and eleven findings, none a stop condition. W2: the amended unit delivered at `6785c26` — the eleven findings answered, the drift policy, honest discovery verdicts, `--self`, the dominance line, unrecognised-client visibility and window honesty — 140 offline tests, `make ci` exit 0. W3: the first real log read, hand-counted, and its extract committed redacted under the registered rules. W4: the finding recorded, thin, with its window and its limits stated.
 
-Outcome: the format claim is confirmed against a real server — 42 of 42 refreshed Caddy JSON lines read, detected with no flag, window 2026-09-21T18:28:02Z → 18:36:32Z (510.40 seconds). **Zero external AI agent traffic was observed in that window.** The single named-agent line in it is synthetic: David has answered that he generated it himself with `curl` while verifying that the logging he had just switched on worked (see the W4 correction below). 38 of the 42 requests are the site's own monitor. Nothing about how agents treat the site is established, and the finding says so.
+Outcome: **delivery accepted, benefit not yet observed.** The tool is built, reviewed, corrected and verified against a real server, and the first finding is recorded — no external AI agent traffic in the observed windows, with the single named-agent line in them being the operator's own test. Whether agents read the site remains unobserved and is the obligation at `next_check`. On the format claim: the format claim is confirmed against a real server — 42 of 42 refreshed Caddy JSON lines read, detected with no flag, window 2026-09-21T18:28:02Z → 18:36:32Z (510.40 seconds). **Zero external AI agent traffic was observed in that window.** The single named-agent line in it is synthetic: David has answered that he generated it himself with `curl` while verifying that the logging he had just switched on worked (see the W4 correction below). 38 of the 42 requests are the site's own monitor. Nothing about how agents treat the site is established, and the finding says so.
 
-Next: David — accept the W1–W4 returns and pull an untouched, week-long extract for the 2026-09-28 checkpoint, which is what would turn W4 from "no agent in eight minutes" into a finding about agent traffic.
+Next: David — at the 2026-09-28 checkpoint, pull a week-long extract that nobody was touching (the R8 observation).
 
-Waiting on: David — an untouched week-long extract at the checkpoint. The `GPTBot` question is answered and the record corrected.
+Then: Quill — read that extract against the same criteria, have the counts independently checked, and record whether the finding changes; the record closes only when that obligation is met, cancelled or transferred.
+
+Waiting on: David — the untouched week-long extract. Nothing else is outstanding: acceptance is recorded, the W4 correction stands, and the two 404s the window surfaced have been handed to Find My Next Bite through him.
 
 Blocked: only W4's benefit finding. W1–W3 are delivered; the review criteria that depend on a longer window stay pending rather than assumed.
 
@@ -54,7 +55,7 @@ Authority: the principal's ratification and grant of 2026-09-21, recorded in Act
 | Act (Run grant, superseded) | 2026-09-21T11:52:40-06:00 | 2026-09-21T11:52:40-06:00 / U1 pickup plan, revision 1 | 2026-09-21T11:59:00-06:00 — tool built and committed; never accepted; grant superseded |
 | Frame and Decide (Plan) | 2026-09-21T12:02:00-06:00 | 2026-09-21T12:12:00-06:00 / revision 3, the Statement of Work | 2026-09-21T12:12:00-06:00 — plan registered |
 | Act (granted) | 2026-09-21T12:33:00-06:00 | 2026-09-21T12:34:00-06:00 / revision 3 ratified by David; grant and unit states in revision 4 | 2026-09-21T13:05:00-06:00 — W1–W4 delivered; see the returns below |
-| Review | 2026-09-21T12:33:00-06:00 | 2026-09-21T12:12:00-06:00 / criteria R1–R7, revision 3 | self-checks done; the principal's acceptance and the longer-window observation pending |
+| Review | 2026-09-21T12:33:00-06:00 | 2026-09-21T12:12:00-06:00 / criteria R1–R7, revision 3 (R8 added at revision 6) | 2026-09-21T13:22:00-06:00 — delivery accepted by David; the R8 observation stays outstanding, so the record stays open |
 
 ## Frame and Decide
 
@@ -561,6 +562,14 @@ the instrument rather than a finding about the site. Recorded here for two reaso
 reader does not mistake it for an agent visit, and so it is not repeated: **the next extract
 should be one nobody was touching**, which is what the 2026-09-28 checkpoint asks for.
 
+**Handed on, not fixed: two 404s belonging to another project.** The window's only non-200
+responses are `GET /foods/impossible-beef/` and a malformed `GET /foods//`, both `404`, both from
+`FindMyNextBiteMonitor/1.0`, at 18:34:5x on 2026-09-21 (the second is a path with a doubled slash,
+which no route should produce). They are Find My Next Bite's health check, not this project's
+tool, and the principal has reported them to David; whether they are raised on that project's
+coordination board is his decision. Recorded here with their evidence and otherwise left alone —
+**nothing in this repository touches another project's health check.**
+
 **What it establishes, and what it does not.** It establishes that nobody had ever checked, which
 is the reason this project exists, and that in the first eight and a half minutes of ever looking
 no agent appeared. It does **not** establish whether the site's machine-readable work —
@@ -586,6 +595,24 @@ following a minute and a half later, which is the shape of a manual probe rather
 The finding above is therefore phrased as "no named-agent user-agent string other than the one the
 principal attributes to his own test", and the plain reading — zero external agents observed — is
 a statement about the window, not about the site.
+
+### Accounting at the acceptance (2026-09-21)
+
+Every result in this record's work scope, and where it stands. Nothing in the scope is left
+implicit.
+
+| Result | State | Evidence |
+| --- | --- | --- |
+| W1 — independent review of the artefact | **Delivered, accepted** | Rook's return in Act; reviewed `c040601` with verified hashes; 18-check re-derivation; two falsification campaigns; eleven findings |
+| W2 — format-drift policy and diagnostics | **Delivered, accepted** | Commit `6785c26`; `docs/DESIGN.md` D12; `caddy-drifted.log` and the partial-drift warning; tests |
+| W2's amendment — declared-self, dominance line, unrecognised clients, window honesty | **Delivered, accepted** | Grant amendment in Act, implemented in `6785c26`; D14 and D15; `--self` tests |
+| W1's findings F1–F11 | **Delivered, accepted** | The responses table in the W1 return; F1 and F2 (the two majors) fixed before W3 as required |
+| W3 — verification against a real log | **Delivered, accepted** | The hand-count table, the committed redacted fixture `64c6847`, and Marlow's independent reproduction |
+| W4 — the first real-host finding | **Delivered, accepted, corrected** | Revision 7's finding: no external agent traffic in the observed windows; the correction and its source are recorded above |
+| Restoring the real checks in `scripts/check-project.sh` | **Delivered, accepted** | Commit `5adbba3`; `make ci` exit 0 with 140 offline tests |
+| The real-log fixture rules and extract (sub-record) | **Delivered; its own record closed** | [`docs/records/2026-09-21-real-log-fixture-redaction.md`](records/2026-09-21-real-log-fixture-redaction.md), all three criteria met |
+| R8 — the untouched week-long observation | **Outstanding, not blocked** | This is the obligation that keeps the record open; owner David, 2026-09-28 |
+| Publication (objective O2) | **Not started, stopped by decision for now** | Q4: publication was not in scope for this grant; it needs the release word, not more work |
 
 ### Out of scope
 
@@ -637,19 +664,35 @@ from evidence of later benefit, and neither is inferred from the other.
 
 | # | Criterion | Evidence source | Owner, window or trigger | Finding | Response |
 | --- | --- | --- | --- | --- | --- |
-| R1 | Each unit meets its registered done-when, and nothing is claimed beyond it | The returns above, `6785c26`, `make ci` | Quill at each return; David accepts | **Met for W1–W4.** W1 delivered a review that re-derived by hand and attacked both promises; W2 delivered the eleven answers and the amendment with 140 tests; W3 delivered the hand-count and the fixture; W4 recorded the finding with its window and limits. Acceptance is David's and is pending | — |
+| R1 | Each unit meets its registered done-when, and nothing is claimed beyond it | The returns above, `6785c26`, `make ci` | Quill at each return; David accepts | **Accepted by David, 2026-09-21**, on the basis of revision 7 (`554d4ff`, reformatted `9f1ca7a`, including the W4 correction he supplied). **Met for W1–W4.** W1 delivered a review that re-derived by hand and attacked both promises; W2 delivered the eleven answers and the amendment with 140 tests; W3 delivered the hand-count and the fixture; W4 recorded the finding with its window and limits. Acceptance was given on 2026-09-21 | — |
 | R2 | Every number is attributable to log lines, and the claim boundary appears wherever counts do | Reports and JSON; the boundary tests; Rook's 18-check re-derivation | Quill at each return | **Met.** The boundary is asserted in every state (the missing one was W1's F3, now fixed); the tool's figures matched an independent hand-count on the fixture corpus and on the real window | — |
 | R3 | No client address is printed, in any mode, and the fixtures still contain addresses to find | `make ci`; `tests/test_report.py`; Rook's 25-path falsification | Quill at every change | **Met.** Rook could not break it, including with addresses in forwarded headers, the URI and the user-agent; the new fixtures extend the same test | — |
 | R4 | A format the tool does not recognise, or a drifted one, produces a specific diagnostic and never a plausible report | `caddy-drifted.log`, the partial-drift warning, the W2 tests | Quill at W2's return | **Met.** The diagnostic names the keys seen and the fields expected, exits 2, and the partial case warns at the top of the report | — |
 | R5 | The first real-host finding names its log source and window, and its headline counts are reproduced by an independent hand count | W3's return above; Marlow's check | Marlow at W3; David accepts W4 | **Met.** Marlow reproduced every revision-6 headline figure from the raw log, in text and JSON, and verified the fixture's redaction exhaustively. It found two documentation defects (M1, M2), both fixed | The record's own text was the only thing wrong; the tool and the fixture needed no change |
 | R6 | `make ci` exits 0 and `make records` is clean at every return | The command output recorded with each return | Quill at every return | **Met.** 140 tests OK, `make ci` exit 0, `make records` clean at `6785c26` | — |
 | R7 | Delivery is not treated as benefit: "the tool runs" and "an agent was observed" stay distinct | This record and the W4 finding | David at acceptance | **Met, and demonstrated.** The tool ran, parsed every real line, and reported one claimed agent; the principal's answer showed that claim was his own test, and W4 was corrected to "zero external AI agents observed" rather than left standing. The two findings were never merged | The correction is recorded as a revision, with the earlier text preserved in `dc34a32` |
+| R9 | The two 404s the window surfaced belong to another project and are not fixed here | W4's "handed on, not fixed" paragraph: `GET /foods/impossible-beef/` and `GET /foods//`, both 404, both `FindMyNextBiteMonitor/1.0`, 2026-09-21 | David, who has the report; whether to raise them on Find My Next Bite's board is his decision | **Recorded, left alone.** Evidence is in W4; nothing in this repository touches another project's health check | No action here by design |
 | R8 | The promised observation: an **untouched** week-long window, which would turn W4's eight-minute note into a finding about agent traffic | A fresh extract nobody was touching; the tool's report over it | David provides; Quill reports and has it independently checked; checkpoint 2026-09-28 | Pending — the commitment recorded at `review_due`. The refreshed 510-second extract was still produced by a person at the keyboard, so it is not the observation R8 asks for | If no untouched extract exists by the checkpoint, Quill re-asks and records that the question is still open |
 
 `next_check` and `review_due` are both set to 2026-09-28: R8 is the one timed obligation, and it
 is a fallback date for an event whose real trigger is the principal pulling a longer extract.
 
 ## Changes
+
+**Revision 8**, 2026-09-21T13:22:00-06:00. Records the principal's acceptance of the delivery and
+closes the commitment accounting. Added: the acceptance finding in the Review table — assessor
+**David**, date 2026-09-21, basis revision 7 (`554d4ff`, reformatted at `9f1ca7a`, including the
+W4 correction he supplied), finding **W1–W4 accepted as delivered**; the accounting table for
+every result in the work scope (W1–W4, the W2 amendment and F1–F11, the restored
+`scripts/check-project.sh`, and the fixture-rules sub-record, whose own record is closed); the
+handed-on finding R9 for the two 404s that belong to Find My Next Bite; and the `Next`/`Then`
+lines for the one outstanding obligation. Changed: `work_status` from `in_review` to `accepted`;
+`review_due` removed because the work is no longer `in_review`, while `next_check: 2026-09-28`
+stays and the record stays **open** — an accepted delivery with a promised later observation
+stays open, and closing it would drop the only check that can still change W4. Source: the
+principal's acceptance of 2026-09-21. Reason: acceptance is recorded by the decider, and an open
+commitment is accounted for rather than implied. Affects: the record's state and the 2026-09-28
+observation.
 
 **Revision 7**, 2026-09-21T13:40:00-06:00. Corrects the delivered W4 finding on the principal's
 answer, and records the limitation that answer revealed. **Previous text** (revision 6, preserved
