@@ -12,6 +12,7 @@ Check the mechanical parts with:
 make records
 ```
 
-This directory is empty on purpose. The first record filed here is the review of the process
-documents themselves — see the first task in [../../AGENTS.md](../../AGENTS.md) — and it is meant
-to be the worked example that later records follow.
+This directory starts empty. It is not waiting for a particular first record: file one when a
+choice meets the admission test in [../RECORDS.md](../RECORDS.md#when-a-record-is-required).
+An earlier revision of this template asked for a process-conventions record as the first entry;
+the installed skill does not require one, so that instruction was removed rather than inherited.
