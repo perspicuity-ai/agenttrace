@@ -1,13 +1,15 @@
 ---
 format: perspicuity-work/1
 id: at-project
-revision: 5
+revision: 6
 skill_version: 0.5.0
 updated: 2026-09-21
 created_at: "2026-09-21T11:48:05-06:00"
-updated_at: "2026-09-21T12:52:00-06:00"
+updated_at: "2026-09-21T13:05:00-06:00"
 record_status: open
-work_status: active
+work_status: in_review
+next_check: 2026-09-28
+review_due: 2026-09-28
 ---
 
 # Agenttrace
@@ -22,7 +24,7 @@ work_status: active
 
 Principal and decider: David — owns the objectives and the ratification. Retains spending, outbound messages, external agreements, the release word for publication, any new dependency, and every decision about a host's configuration and what it stores.
 
-Work owner: Quill (coordinator). Rook is named as the W1 reviewer, not the author.
+Work owner: Quill (coordinator). Rook is named as the W1 reviewer and Marlow as the W3 assessor; neither is the author of the work each checks. Both are in `docs/ACTORS.md`.
 
 Mode: `Run` — the principal ratified B1-amended and granted W1–W4 on 2026-09-21, so the record carries the granted units through to their returns and stops there. Earlier mode: `Plan`, from 2026-09-21T12:02:00-06:00 until this grant, which registered the Statement of Work (revision 3) and stopped at the requested grant. Earlier still: `Run`, 11:52:40–11:59:00-06:00, under which the tool was built ahead of the plan and committed at `c040601`.
 
@@ -30,17 +32,19 @@ Decision: `selected` — David ratified the recommended course B1-amended and gr
 
 Work scope: units W1–W4 as registered in revision 3 — W1 an independent review of the artefact, W2 format-drift diagnostics and the unrecognised-format policy, W3 verification against a real access log, W4 the first real-host finding — plus restoring the real project checks in `scripts/check-project.sh`, which the propagated process documents replaced with a deliberately failing stub.
 
-Work: the grant is recorded in Act. W1 is picked up (Rook, not the author). The host's log arrived at 2026-09-21T18:35Z and is readable here in `var/` (gitignored); a redacted 21-entry extract is committed as a fixture with its redaction rules registered first. W2's scope was amended before implementing it, on the principal's direction: declared-self clients, a dominance line, unrecognised-client visibility and window-duration honesty (see the grant's amendment). W3's first reading is recorded in Act.
+Review due: 2026-09-28 — the fallback checkpoint for the outstanding observation in the Review table: a longer extract from the host, which would turn W4's 408-second note into a finding about agent traffic. The owner is David; if no longer extract exists by then, Quill re-asks rather than letting the question lapse.
 
-Outcome: the format claim is now confirmed against a real server — 21 of 21 real Caddy JSON lines read, detected with no flag, window 2026-09-21T18:28:02Z → 18:34:50Z. Nothing about agent behaviour is established: the window is 408 seconds, and the single claimed agent in it sits in a window where every entry shares one masked `/16` and two entries are the change's own curl calls.
+Work: W1, W2, W3 and W4 are delivered and their evidence is in Act. W1: Rook's independent review of `c040601`, with the hand-count reproduced, the two promises attacked and eleven findings, none a stop condition. W2: the amended unit delivered at `6785c26` — the eleven findings answered, the drift policy, honest discovery verdicts, `--self`, the dominance line, unrecognised-client visibility and window honesty — 140 offline tests, `make ci` exit 0. W3: the first real log read, hand-counted, and its extract committed redacted under the registered rules. W4: the finding recorded, thin, with its window and its limits stated.
 
-Next: Quill — assess Rook's W1 return, then carry W2 (as amended) to its return, then finish W3's hand-count and record W4.
+Outcome: the format claim is confirmed against a real server — 21 of 21 real Caddy JSON lines read, detected with no flag, window 2026-09-21T18:28:02Z → 18:34:50Z (408 seconds). One request in that window claims `GPTBot` and asked for `/llms.txt`, receiving a 200; 17 of the 21 requests are the site's own monitor. **Nothing about how agents treat the site is established**, and the finding says so.
 
-Waiting on: David — a longer window (a week, or whatever he will pull) before W4 can carry a finding about agent traffic; the 408-second window supports a parser and shape finding only.
+Next: David — accept the W1–W4 returns, answer whether the single `GPTBot` line was a test of his own, and pull a longer window if W4 should become a finding about agent traffic.
 
-Blocked: W4's benefit finding, not its delivery. W3 is unblocked and being finished; W4 can record what this window shows, labelled as a seven-minute window, while the question "are agents reading the site" waits on a longer extract.
+Waiting on: David — a longer extract (a week would do) for W4's benefit finding, and an answer on the `GPTBot` line's origin.
 
-Dependency: a fresh, longer extract from the host (owner David) turns W4 from a shape note into a real finding; W1, W2 and W3's hand-count need nothing further.
+Blocked: only W4's benefit finding. W1–W3 are delivered; the review criteria that depend on a longer window stay pending rather than assumed.
+
+Dependency: a fresh, longer extract from the host (owner David) at the 2026-09-28 checkpoint, or the question is re-asked then.
 
 Authority: the principal's ratification and grant of 2026-09-21, recorded in Act; his Statement of Work request of the same day (revision 3); and his brief of the same day (revision 1). David retains publication (Q4 answered: not in scope), spending, outbound messages, external agreements, dependencies, and any further change to a host's configuration.
 
@@ -49,8 +53,8 @@ Authority: the principal's ratification and grant of 2026-09-21, recorded in Act
 | Frame and Decide (Run) | 2026-09-21T11:49:00-06:00 | 2026-09-21T11:52:40-06:00 / revision 1, commit `652a38d` | 2026-09-21T11:52:40-06:00 |
 | Act (Run grant, superseded) | 2026-09-21T11:52:40-06:00 | 2026-09-21T11:52:40-06:00 / U1 pickup plan, revision 1 | 2026-09-21T11:59:00-06:00 — tool built and committed; never accepted; grant superseded |
 | Frame and Decide (Plan) | 2026-09-21T12:02:00-06:00 | 2026-09-21T12:12:00-06:00 / revision 3, the Statement of Work | 2026-09-21T12:12:00-06:00 — plan registered |
-| Act (granted) | 2026-09-21T12:33:00-06:00 | 2026-09-21T12:34:00-06:00 / revision 3 ratified by David; grant and unit states in this revision | pending — W1 in progress |
-| Review | 2026-09-21T12:33:00-06:00 | 2026-09-21T12:12:00-06:00 / criteria R1–R7, revision 3 | pending — no criterion assessed yet |
+| Act (granted) | 2026-09-21T12:33:00-06:00 | 2026-09-21T12:34:00-06:00 / revision 3 ratified by David; grant and unit states in revision 4 | 2026-09-21T13:05:00-06:00 — W1–W4 delivered; see the returns below |
+| Review | 2026-09-21T12:33:00-06:00 | 2026-09-21T12:12:00-06:00 / criteria R1–R7, revision 3 | self-checks done; the principal's acceptance and the longer-window observation pending |
 
 ## Frame and Decide
 
@@ -334,7 +338,7 @@ format claim now has its first real-server evidence.
 | `curl/7.81.0` | 2 | `/`, `/llms.txt` |
 | `Mozilla/5.0 … Chrome/140.0` | 1 | `/` |
 | `…; compatible; GPTBot/1.2; +https://openai.com/gptbot` | 1 | `/llms.txt` |
-| **Total** | **21** | 19 distinct paths after query stripping |
+| **Total** | **21** | 16 distinct paths after query stripping (corrected at revision 6 — see the assessor's M1) |
 
 **What this exposed, and what the W2 amendment does about it:**
 
@@ -397,6 +401,148 @@ is named; at least one fixture is re-derived by hand; both promises have a falsi
 each finding has a reproducible check; the return states what was not verified. A review that only
 re-runs `make ci` does not meet this.
 
+### W1 return — Rook, independent review (2026-09-21T12:5x-06:00)
+
+**Reviewer:** Rook, named in `docs/ACTORS.md`, not the author of the artefact. **Reviewed:** commit
+`c040601`; Rook reproduced all twelve frozen blob hashes and re-derived every number from a
+`git archive` export rather than the working tree, because the tree moved under it (that drift is
+Quill's fault and is recorded below). Drafts reviewed by hash: `README.md`
+`0c747287f312…`, `docs/DESIGN.md` `e05ab90a30a6…`.
+
+**Re-derivation.** Rook hand-counted `tests/fixtures/caddy-sample.log` from the raw text with its
+own tools and compared with the tool: 35 lines, 33 requests, coverage 09:00:00Z–14:01:40Z, GPTBot
+7 / ClaudeBot 3 / PerplexityBot 2 / ChatGPT-User 1, 13 named (39.4%), search crawler 8, other bot
+6, browser 4, unrecognised 2, the three discovery hits, and the two 404 missing paths. **The tool
+agreed on all 18 checks.** Rook also reproduced the corpus measurements in `docs/DESIGN.md`
+independently (7 files, 26,886 bytes, 79 non-blank lines, 74 requests, 35/13/10/9/7, and the
+load-bearing 56 `Mozilla/` strings against 9 browsers).
+
+**Falsification of the two promises.** (a) No address in any output: held across 25 output paths —
+every fixture in both modes, all three states, `--stdin` and `-`, and every error path — including
+hostile content: addresses in `X-Forwarded-For`, `Forwarded`, `True-Client-IP` and the request
+URI, and user-agent strings carrying injected newlines, a forged verdict line and ANSI escapes.
+(b) An empty or unreadable input is never a working report: held across 9 degenerate inputs,
+including binary, UTF-16, HTML and an Apache error log, all exit 2 with no counts. No network
+surface, static or runtime. No vacuous tests found; the gaps are missing cases, not fake
+assertions.
+
+| # | Finding | Response |
+| --- | --- | --- |
+| F1 | **Major.** The `/llms.txt` verdict said READ for any status below 400, so a 302 to a missing file printed as read — a wrong answer to the question the tool exists for | **Fixed** in W2 (`6785c26`): 2xx is READ, 304 says the client held a copy, a redirect says the file was not served there, and 403/404/410/no-response are reported as themselves. New unit tests on `discovery_verdict` and the `caddy-llms-statuses.log` fixture |
+| F2 | **Major.** The JSON `discovery` block reported all clients' requests beside a named-agent list, so a machine reader could take 4 for 2 | **Fixed**: `named_agent_requests` and `requests_from_all_clients` are separate keys with their own status maps, and a test asserts the text and JSON agree |
+| F3 | **Minor.** The claim boundary was missing from the `no_readable_lines` text report | **Fixed**: carried in every state; the test that asserted its absence now asserts its presence |
+| F4 | **Minor.** A combined line with exactly one trailing quoted field (Apache's stock `referer` format) was refused | **Fixed**: one or two trailing fields parse, vhost-prefixed lines parse, and a single field is read as a user-agent only when it is not a URL (`combined-referer.log`) |
+| F5 | **Minor.** Status codes were not range-checked; `999` rendered as a status and `0` counted as success | **Fixed**: only `0` or `100–599` is a status; `docs/DESIGN.md` D13 |
+| F6 | **Minor.** A request target with no path produced an invented `/` | **Fixed**: such a line is not read |
+| F7 | **Minor.** Every empty state asserted in the present tense that `findmynextbite.food` keeps no access log, which C1 and README had already contradicted | **Fixed**: the history is stated in the past tense; a test forbids the present-tense claim |
+| F8 | **Minor.** One unreadable file discarded every source and rendered nothing | **Fixed**: failed sources are reported in the output, the rest still render, and the exit code stays 1 |
+| F9 | **Minor.** Per-file format drift produced only a bare "N not read as requests" | **Fixed**: the drift policy and diagnostics (`docs/DESIGN.md` D12), with `caddy-drifted.log` and a partial-drift warning |
+| F10 | **Nit.** The docs did not state the discovery status boundary | **Fixed**: stated in README and D13 |
+| F11 | **Nit.** A health check claiming a named-agent string counts in the headline figure with no qualifier | **Addressed**: `--self`, the dominance line and the unrecognised-client listing (D14). The classification itself is the brief's design and is unchanged |
+
+**Process points Rook raised.** (1) The working tree drifted during its review — `classify.py` and
+`report.py` changed under a frozen-basis review, and the clarification Quill sent said only tests
+and fixtures had changed. That was wrong and is recorded here: W2 should have been held or the
+basis re-frozen explicitly. Rook recovered by re-deriving from `git archive c040601`, so its
+findings remain sound. (2) `__pycache__` in the working tree: checked — `git ls-files | grep
+pycache` returns nothing and `.gitignore` covers it, so no bytecode is committed; the stale
+directory was a working-tree artefact only.
+
+**Rook's assessment:** the artefact is not unsound, amendment rather than rebuild is the right
+response, and no finding is a stop condition. F1 and F2 were to land before W3; they did.
+**Acceptance:** David's, pending. Rook's review is delivered, not accepted.
+
+### W2 return — Quill (2026-09-21T13:0x-06:00)
+
+**Delivered at `6785c26`.** The eleven findings above are answered, and the grant amendment is
+implemented: `--self TOKEN` (repeatable) sets a client aside in its own category and section;
+a dominance line names the client holding most of an undeclared log and says the tool cannot tell
+whose it is; unrecognised user-agent strings are listed with their counts; the coverage line
+carries the window's duration and a window under an hour says the counts describe that window
+only; health-check tokens count as bots. The drift policy is written down (D12) and enforced: a
+changed schema is refused with the fields it saw and the fields it expected, and a partly
+unreadable source is flagged at the top of the report.
+
+**Evidence:** `python3 -m unittest discover -s tests -t .` → 140 tests, OK; `scripts/check-project.sh`
+byte-compiles and runs them; `make ci` exit 0; `make records` clean. New fixtures
+`caddy-drifted.log`, `caddy-llms-statuses.log`, `combined-referer.log`. `docs/DESIGN.md` gained
+D12–D15 with their rejected alternatives; `README.md` gained `--self`, the status rules, the
+file-permission note and a real-window example; `docs/ARCHITECTURE.md` was reduced to the shape
+and an index, as the plan directed.
+
+**Deviation to note:** the JSON key `discovery[path].read` was replaced by `served` plus the
+named-agent figures. The JSON format is pre-release and nothing outside this repository consumes
+it; the rename is part of the F2 fix rather than a separate choice.
+
+### W3 return — the real window, hand-counted (2026-09-21T12:5x-06:00)
+
+**Source and window:** `var/findmynextbite-access.log` (unredacted, gitignored, never committed),
+21 Caddy JSON entries, window 2026-09-21T18:28:02Z → 18:34:50Z (408.36 seconds). The redacted
+extract is committed as `tests/fixtures/real-findmynextbite-2026-09-21-1828Z.log` under the rules
+in [`docs/records/2026-09-21-real-log-fixture-redaction.md`](records/2026-09-21-real-log-fixture-redaction.md).
+
+**Hand-count, from the raw text, and the tool's answer after W2** (`--self FindMyNextBiteMonitor`):
+
+| Figure | Hand count | Tool | Agreement |
+| --- | --- | --- | --- |
+| Entries read as requests | 21 of 21 | 21 of 21, format `caddy`, no flag | agrees |
+| Window | 18:28:02Z → 18:34:50Z, 408 s | same, `short_window: true` | agrees |
+| `FindMyNextBiteMonitor/1.0` | 17 (declared self) | 17 declared self, 15 paths | agrees |
+| `curl/7.81.0` | 2 | 2 other bot | agrees |
+| Browser (`Chrome/140.0`) | 1 | 1 browser | agrees |
+| Claimed `GPTBot` | 1, `/llms.txt`, 200 | 1 named agent, `VERDICT: READ` | agrees |
+| Search crawlers | 0 | 0 | agrees |
+| Named agents' missing paths (404/410) | 0 | none | agrees |
+| Discovery files | `/llms.txt` by GPTBot (200); `/robots.txt`, `/sitemap.xml` by no named agent | same | agrees |
+
+**Independent check of this hand-count:** Marlow, an assessor who is not the author and not the W1
+reviewer, counted the same window from the raw log with its own tools and rebuilt the committed
+extract from the original to check the redaction. **Result: every revision-6 figure reproduced.**
+Marlow confirmed 21 entries, the window and its 408.357891-second span, the per-client counts
+(17 / 2 / 1 / 1), 16 distinct query-stripped paths, only `GPTBot` among the twelve, the
+discovery-file answers, and that the tool agrees with each published figure in text and JSON, with
+and without `--self`. The fixture check was exhaustive: rebuilding the original by applying the
+three documented removals left **no residual difference** across all 21 objects, no address-like
+token, no `?`, and no address, port, cookie or response-header key.
+
+Marlow also distinguished two measures that must not be conflated: the tool's dominance figure is
+17 of 21 (81%) by *user-agent*, while by *address* every entry shares one masked `/16` — the tool
+reads no addresses, so 100% is Marlow's observation, not the tool's output.
+
+Marlow found two documentation defects, both fixed in this revision:
+
+| # | Finding | Response |
+| --- | --- | --- |
+| M1 | The revision-5 hand-count table said the window held **19** distinct query-stripped paths; the true count is **16** | **Fixed** in the retained table above, with the correction marked. The per-path occurrences still sum to 21, so nothing was dropped — the distinct count was simply wrong. The revision-5 text is preserved in commit `b550665` |
+| M2 | The fixture's provenance note claimed no cookie material was present in the original "in either request or response headers"; the raw log in fact carries `resp_headers["Set-Cookie"] = ["REDACTED"]` on four lines and `Vary: ["Cookie"]` on fourteen | **Fixed** in the note: it now states what was there (Caddy's own placeholder, no real cookie value) and that removing `resp_headers` removed it. The committed fixture needed no change, and no sensitive value was ever in it |
+
+**What the assessor could not check:** the host itself, the `/16` mask claim, and the origin of the
+`GPTBot` line — none is derivable from the bytes; and the tool truncates coverage timestamps to
+whole seconds.
+
+**What the window cannot support, recorded with it:** 408 seconds of one host, taken minutes after
+logging was switched on. It establishes that the parser reads what a real Caddy writes. It does
+not establish anything about how agents treat the site, and every entry in it shares one masked
+`/16`, so the log cannot separate a local test from a remote crawler.
+
+### W4 — the first real-host finding, thin by construction (2026-09-21T13:0x-06:00)
+
+**Finding, for the window 2026-09-21T18:28:02Z → 18:34:50Z only:** one request in the window
+claimed to be `GPTBot` and asked for `/llms.txt`, receiving `200`; no other named AI agent
+appeared; no named agent requested `/robots.txt` or `/sitemap.xml`; no named agent asked for a
+path it did not get; 17 of the 21 requests came from the site's own monitor (declared with
+`--self` for this reading) and 2 from `curl`.
+
+**Limits, stated in the finding:** the window is 408 seconds; the client address is masked to a
+`/16` at write time so every entry shares one network; two entries are the change's own `curl`
+calls; and the single `GPTBot` claim has not been confirmed as a real visit rather than a test.
+**Open question for David:** was that `GPTBot` request his own test? Until it is answered, the
+finding is recorded as one self-declared claim in one short window, which is all the bytes
+support. A longer extract (owner: David) would turn this into a finding about agent traffic; it
+is the commitment at `review_due: 2026-09-28`.
+
+**Not published.** Q4 was answered "not in scope", so this finding lives in this record only.
+
 ### Out of scope
 
 | Not covered | Reason |
@@ -447,18 +593,32 @@ from evidence of later benefit, and neither is inferred from the other.
 
 | # | Criterion | Evidence source | Owner, window or trigger | Finding | Response |
 | --- | --- | --- | --- | --- | --- |
-| R1 | Each unit meets its registered done-when, and nothing is claimed beyond it | The unit's artefacts, tests and return | Unit owner at return; David accepts | Pending | — |
-| R2 | Every number in every output is attributable to log lines, and the claim boundary is present wherever counts appear | Reports and JSON; the tests that assert the boundary | Quill at each return; re-checked at W3 | Pending | — |
-| R3 | No client address is printed, in any mode, and the tests that assert it still contain addresses to find | `make ci`; `tests/test_report.py` | Quill at every change | Pending | — |
-| R4 | A format the tool does not recognise, or a drifted one, produces a specific diagnostic and never a plausible report | The W2 fixtures and tests; W3's real log | Quill at W2's return | Pending | — |
-| R5 | The first real-host finding names its log source and window, and its headline counts are reproduced by an independent hand count | W3's verification note; the assessor's check | Assessor at W3; David accepts W4 | Pending | — |
-| R6 | `make ci` exits 0 and `make records` is clean at every return | Command output recorded in this record | Quill at every return | Pending | — |
-| R7 | Delivery is not treated as benefit: "the tool runs" and "an agent was observed" stay distinct in every claim | This record and any published finding | David at acceptance | Pending | — |
+| R1 | Each unit meets its registered done-when, and nothing is claimed beyond it | The returns above, `6785c26`, `make ci` | Quill at each return; David accepts | **Met for W1–W4.** W1 delivered a review that re-derived by hand and attacked both promises; W2 delivered the eleven answers and the amendment with 140 tests; W3 delivered the hand-count and the fixture; W4 recorded the finding with its window and limits. Acceptance is David's and is pending | — |
+| R2 | Every number is attributable to log lines, and the claim boundary appears wherever counts do | Reports and JSON; the boundary tests; Rook's 18-check re-derivation | Quill at each return | **Met.** The boundary is asserted in every state (the missing one was W1's F3, now fixed); the tool's figures matched an independent hand-count on the fixture corpus and on the real window | — |
+| R3 | No client address is printed, in any mode, and the fixtures still contain addresses to find | `make ci`; `tests/test_report.py`; Rook's 25-path falsification | Quill at every change | **Met.** Rook could not break it, including with addresses in forwarded headers, the URI and the user-agent; the new fixtures extend the same test | — |
+| R4 | A format the tool does not recognise, or a drifted one, produces a specific diagnostic and never a plausible report | `caddy-drifted.log`, the partial-drift warning, the W2 tests | Quill at W2's return | **Met.** The diagnostic names the keys seen and the fields expected, exits 2, and the partial case warns at the top of the report | — |
+| R5 | The first real-host finding names its log source and window, and its headline counts are reproduced by an independent hand count | W3's return above; Marlow's check | Marlow at W3; David accepts W4 | **Met.** Marlow reproduced every revision-6 headline figure from the raw log, in text and JSON, and verified the fixture's redaction exhaustively. It found two documentation defects (M1, M2), both fixed | The record's own text was the only thing wrong; the tool and the fixture needed no change |
+| R6 | `make ci` exits 0 and `make records` is clean at every return | The command output recorded with each return | Quill at every return | **Met.** 140 tests OK, `make ci` exit 0, `make records` clean at `6785c26` | — |
+| R7 | Delivery is not treated as benefit: "the tool runs" and "an agent was observed" stay distinct | This record and the W4 finding | David at acceptance | **Met.** W4 says what one 408-second window contained and states that nothing about agent behaviour follows from it; the parser result and the agent result are separate lines | — |
+| R8 | The promised observation: a longer window, which would turn W4's note into a finding about agent traffic | A fresh extract from the host; the tool's report over it | David provides; Quill reports; checkpoint 2026-09-28 | Pending — the commitment recorded at `review_due` | If no longer extract exists by the checkpoint, Quill re-asks and records that the question is still open |
 
-No timed obligation exists yet, so no `next_check` is set: the plan waits on the principal's
-answers, not on a date. When W3 has a log, its window and the review date belong here.
+`next_check` and `review_due` are both set to 2026-09-28: R8 is the one timed obligation, and it
+is a fallback date for an event whose real trigger is the principal pulling a longer extract.
 
 ## Changes
+
+**Revision 6**, 2026-09-21T13:05:00-06:00 (amended at 13:2x when Marlow's check returned).
+Records the returns of W1–W4 and sets the work to
+`in_review` with the one outstanding observation. Added: Rook's W1 return with its re-derivation,
+its two falsification campaigns, its eleven findings and their responses, and its two process
+points (the drift under review was Quill's error and is recorded as one; the `__pycache__`
+concern was checked and is not committed); W2's return with its evidence and its one deviation
+(the JSON `read` key became `served`); W3's return with the hand-count table, the assessor's
+check and the limits of a 408-second window; W4's finding with its open question about the
+`GPTBot` line's origin; review findings R1–R8; and the 2026-09-28 checkpoint. Source: the W1
+return from Rook and the unit returns from Quill. Reason: a return is recorded against the
+criteria registered before it, and delivery is kept apart from benefit. Affects: W3, W4 and the
+review obligations.
 
 **Revision 5**, 2026-09-21T12:52:00-06:00. Records the host log arriving, W3's first reading, and
 the W2 scope amendment, registered before the amendment is implemented. Added: the log in `var/`

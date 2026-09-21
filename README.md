@@ -46,6 +46,21 @@ The tool itself needs no privileges and writes nothing.
 
 Run it from this directory, or put this directory on `PYTHONPATH`.
 
+### The JSON document
+
+`--json` prints one document with these keys: `state` (`reported`, `no_agent_traffic` or
+`no_readable_lines`), `claim_boundary`, `sources` (per file: line counts, detected format, and any
+diagnostic), `coverage` (`first_seen`, `last_seen`, `duration_seconds`, `short_window`), `totals`
+(`requests`, `by_category`, `named_agent_requests`, `agent_share`), `named_agents`,
+`named_agents_not_seen`, `search_crawlers`, `declared_self` (the `--self` declarations, matched
+and unmatched), `unrecognised_clients`, `dominant_client`, `discovery`, `top_agent_paths` and
+`agent_missing_paths`.
+
+In `discovery`, every count is named for what it counts: `named_agent_requests` and
+`named_agent_statuses` are the twelve agents only, while `requests_from_all_clients` and
+`statuses_from_all_clients` include every client. `served` is the honest boolean; `verdict`
+carries the sentence.
+
 ### Exit codes
 
 | Code | Meaning |

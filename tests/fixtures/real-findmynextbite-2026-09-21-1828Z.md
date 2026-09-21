@@ -22,8 +22,12 @@ what was actually done to the bytes is recorded here.
 2. Query strings **removed** from `request.uri`. One entry was affected:
    `/api/discovery?q=Vegan%20Supply` is recorded as `/api/discovery`.
 3. `resp_headers` **removed**. The tool never reads it, and response headers can carry
-   `Set-Cookie`. No `Cookie`, `Set-Cookie` or `Authorization` value was present in these lines
-   before removal, in either request or response headers.
+   `Set-Cookie`. In the original, four lines carried `resp_headers["Set-Cookie"] = ["REDACTED"]`
+   and fourteen carried `Vary: ["Cookie"]` — Caddy's own placeholder rather than a cookie value,
+   but present, and removed with the block. No `Cookie` or `Authorization` header appeared in any
+   request, and no cookie material of any kind survives in the committed file. (Corrected
+   2026-09-21: the earlier wording claimed no such field was present at all, which the raw log
+   contradicts. Found by Marlow's W3 redaction check; the fixture itself was already clean.)
 4. No other field was changed. `ts`, `status`, `request.method`, `request.host`, `request.uri`,
    `request.headers.User-Agent`, `request.headers.Accept`, `request.tls` and the remaining
    top-level fields are as the server wrote them.

@@ -39,11 +39,12 @@ was never committed.
 
 Outcome: the repository now holds real traffic, redacted. The redaction holds mechanically: no
 address-like token, no query string, no address, port, cookie or response-header material in the
-committed file (`tests/test_real_fixture.py`). The fixture's third purpose — adding evidence the
-synthetic logs cannot — is being assessed in the parent record's W3.
+committed file (`tests/test_real_fixture.py`). All three review criteria are met: the fixture
+also did what only a real one could — it exposed the site's own monitor as 17 of 21 requests,
+which no synthetic fixture had contained.
 
-Next: Quill — use the fixture in W3's verification and record whether it adds what the synthetic
-fixtures cannot.
+Next: David — accept the rules and the extract, or name a correction. No further work is
+outstanding in this record.
 
 Dependency: none outstanding. A longer window would extend the fixture's use, but the rules above
 already govern it and need no change.
@@ -112,7 +113,7 @@ rules is the owner's call):
 | --- | --- | --- | --- | --- |
 | The committed fixture holds no address, no cookie material and no query string | The fixture file; the redaction check in the suite | Quill at the commit; re-checked on every later edit | **Met.** `tests/test_real_fixture.py` asserts no address-like token, no query string, and no address, port, cookie, authorization or response-header key; `make ci` passes | Keep the check; it fails the build if the redaction is undone |
 | The window and the redaction applied are recorded beside the fixture and in this record | The provenance note; this record | Quill at the commit | **Met.** `tests/fixtures/real-findmynextbite-2026-09-21-1828Z.md` records source, window, extraction, the four redactions and what the window cannot support; the test asserts the window is in it | — |
-| The fixture adds evidence the synthetic fixtures cannot: a real server's line shapes and statuses | The test that uses it; W3's verification note in the parent record | Quill at W3 | Pending — the first reading (21 of 21 real lines parsed) is in the parent record; the final note lands with W3's return | — |
+| The fixture adds evidence the synthetic fixtures cannot: a real server's line shapes and statuses | The test that uses it; W3's verification note in the parent record | Quill at W3 | **Met.** It is the only fixture written by a real server (Caddy's `tls` block, `client_ip`, an address masked to `/16`, a real monitor user-agent), and it is what exposed the site-monitor problem: 17 of its 21 requests were `FindMyNextBiteMonitor`, which the synthetic corpus had never contained. All 21 lines parse | The finding drove `--self`, the dominance line and the health-check tokens (parent record, W2) |
 
 ## Changes
 

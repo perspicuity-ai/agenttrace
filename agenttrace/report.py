@@ -486,6 +486,15 @@ def discovery_verdict(statuses: Counter) -> tuple[str, bool]:
         return f"REDIRECTED ({redirects}) — the file itself was not served at this path", False
     if 0 in codes:
         return "NO RESPONSE RECORDED — the request produced no status", False
+    client_errors = sorted(code for code in codes if 400 <= code < 500)
+    if client_errors:
+        listed = ", ".join(str(code) for code in client_errors)
+        if all(code in (404, 410) for code in client_errors):
+            return f"REQUESTED BUT NOT SERVED ({listed})", False
+        return f"REFUSED ({listed}) — the server answered without serving the file", False
+    server_errors = sorted(code for code in codes if code >= 500)
+    if server_errors:
+        return f"SERVER ERROR ({', '.join(str(code) for code in server_errors)})", False
     return "REQUESTED BUT NOT SERVED", False
 
 

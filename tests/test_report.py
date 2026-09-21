@@ -302,10 +302,12 @@ class DiscoveryVerdictTests(unittest.TestCase):
         self.assertTrue(served)
 
     def test_a_refusal_and_a_missing_file_are_not_read(self):
-        for status, expected in ((404, "NOT SERVED"), (410, "NOT SERVED"), (403, "NOT SERVED")):
+        for status, expected in ((404, "NOT SERVED"), (410, "NOT SERVED"), (403, "REFUSED"),
+                                 (401, "REFUSED"), (503, "SERVER ERROR")):
             with self.subTest(status=status):
                 verdict, served = discovery_verdict(Counter({status: 1}))
                 self.assertIn(expected, verdict)
+                self.assertIn(str(status), verdict)
                 self.assertFalse(served)
 
     def test_no_response_recorded_is_not_read(self):
@@ -352,7 +354,7 @@ class DiscoveryAgreementTests(unittest.TestCase):
         self.assertNotIn("VERDICT: READ", text)
         self.assertFalse(document["discovery"]["/llms.txt"]["served"])
         self.assertIn("NOT MODIFIED", text)  # /robots.txt, 304
-        self.assertIn("REQUESTED BUT NOT SERVED", text)  # /sitemap.xml, 403
+        self.assertIn("REFUSED (403)", text)  # /sitemap.xml, forbidden
 
 
 class SelfDeclarationTests(unittest.TestCase):

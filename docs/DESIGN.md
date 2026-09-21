@@ -233,10 +233,11 @@ parse.
 
 "READ" means a named agent requested the path and a 2xx was recorded. `304 Not Modified` is
 read as read, and says the client already held a copy. `301`/`302`/`307`/`308` are **not** read:
-the file was not served at that path. `404`, `410`, `403`, `5xx` and `0` (Caddy records no
-status when the connection dies) are all reported as what they are. Nothing below 400 counts as
-success — the earlier version of this tool did exactly that, and it would have answered the
-question it exists to answer wrongly.
+the file was not served at that path, and the verdict names the codes. `404` and `410` say
+"requested but not served"; `401` and `403` say "refused"; `5xx` says "server error"; `0` — Caddy
+records no status when the connection dies — says no response was recorded. Nothing below 400
+counts as success: the earlier version of this tool did exactly that, and it would have answered
+the question the tool exists to answer wrongly.
 
 Similarly, a status outside `0` or `100–599` is not a status: the line is counted as not read
 rather than rendered as a real response.
