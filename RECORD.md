@@ -1,11 +1,11 @@
 ---
 format: perspicuity-work/1
 id: at-project
-revision: 4
+revision: 5
 skill_version: 0.5.0
 updated: 2026-09-21
 created_at: "2026-09-21T11:48:05-06:00"
-updated_at: "2026-09-21T12:34:00-06:00"
+updated_at: "2026-09-21T12:52:00-06:00"
 record_status: open
 work_status: active
 ---
@@ -30,17 +30,17 @@ Decision: `selected` — David ratified the recommended course B1-amended and gr
 
 Work scope: units W1–W4 as registered in revision 3 — W1 an independent review of the artefact, W2 format-drift diagnostics and the unrecognised-format policy, W3 verification against a real access log, W4 the first real-host finding — plus restoring the real project checks in `scripts/check-project.sh`, which the propagated process documents replaced with a deliberately failing stub.
 
-Work: the grant is recorded in Act, with the reviewer named and the frozen hashes. W1 is picked up (Rook, not the author); W2 is granted and follows W1's return; W3 and W4 are granted and blocked, because the host now writes a log but no copy is reachable from this environment (C12).
+Work: the grant is recorded in Act. W1 is picked up (Rook, not the author). The host's log arrived at 2026-09-21T18:35Z and is readable here in `var/` (gitignored); a redacted 21-entry extract is committed as a fixture with its redaction rules registered first. W2's scope was amended before implementing it, on the principal's direction: declared-self clients, a dominance line, unrecognised-client visibility and window-duration honesty (see the grant's amendment). W3's first reading is recorded in Act.
 
-Outcome: unknown — no real log has been read here yet. The input now exists on the host and the host's config masks the address at write time (C13), but nothing about a host may be claimed until W3 reproduces the counts by hand.
+Outcome: the format claim is now confirmed against a real server — 21 of 21 real Caddy JSON lines read, detected with no flag, window 2026-09-21T18:28:02Z → 18:34:50Z. Nothing about agent behaviour is established: the window is 408 seconds, and the single claimed agent in it sits in a window where every entry shares one masked `/16` and two entries are the change's own curl calls.
 
-Next: Quill — assess Rook's W1 return, then carry W2 to its return.
+Next: Quill — assess Rook's W1 return, then carry W2 (as amended) to its return, then finish W3's hand-count and record W4.
 
-Waiting on: David — a readable copy of a window of the host's access log in this environment, which is what W3 and W4 need.
+Waiting on: David — a longer window (a week, or whatever he will pull) before W4 can carry a finding about agent traffic; the 408-second window supports a parser and shape finding only.
 
-Blocked: W3 and W4. The log is written on the host at `/var/log/caddy/findmynextbite-access.log`, mode 0640, group `caddy`; this machine has no `/var/log/caddy`, no `caddy` binary, and `david` is not in the `caddy` group, and this session can neither use sudo nor fetch from the host (C12). W1 and W2 are not blocked.
+Blocked: W4's benefit finding, not its delivery. W3 is unblocked and being finished; W4 can record what this window shows, labelled as a seven-minute window, while the question "are agents reading the site" waits on a longer extract.
 
-Dependency: a copy of the log placed in the workspace (or the tool run on the host, with its output returned) unblocks W3 and W4. Nothing else outside this repository is needed.
+Dependency: a fresh, longer extract from the host (owner David) turns W4 from a shape note into a real finding; W1, W2 and W3's hand-count need nothing further.
 
 Authority: the principal's ratification and grant of 2026-09-21, recorded in Act; his Statement of Work request of the same day (revision 3); and his brief of the same day (revision 1). David retains publication (Q4 answered: not in scope), spending, outbound messages, external agreements, dependencies, and any further change to a host's configuration.
 
@@ -82,7 +82,7 @@ restated here. No objective was added or dropped by the mode change.
 | # | Condition | Type | Basis | Affects | Resolver or change trigger |
 | --- | --- | --- | --- | --- | --- |
 | C1 | **Amended at revision 4.** Was: `findmynextbite.food` writes no access log — no `log` directive, and the app's access log goes to `/dev/null`. Now: the host writes Caddy JSON access logs at `/var/log/caddy/findmynextbite-access.log`, mode 0640, group `caddy`, rolling at 50 MiB with five files and 30 days kept, with the client address masked at write time (`ip_mask 16 32` on `remote_ip` and `client_ip`) | Given | Workspace copy `find-my-next-bite/ops/public.caddy`, updated 2026-09-21T12:30-06:00, plus the principal's report that he applied and verified it on the host; the running host was not inspected from here | W3, W4, the project's success test | Already triggered. The log exists; C12 decides whether W3 can run against it |
-| C2 | No real log has been read by this tool, and no copy of one is reachable from this environment | Given | Search of this machine for any copy, 2026-09-21: none. The tool has only ever read its own synthetic fixtures | Every claim about agents; W3; the difference between "the tool runs" and "the tool has answered" | The log becoming readable here (C12). Until then no claim about a host may be made |
+| C2 | **Amended at revision 5.** A real log has now been read: a 21-entry extract of the host's own log, 21 of 21 lines read as Caddy requests. It is one 408-second window, so the tool's *format* claim is confirmed and its *agent* counts are not | Given | The extract in `var/` (gitignored) and the redacted fixture committed at `64c6847`; first reading recorded in Act | Every claim about agents; W3, W4 | A longer window (owner: David) for anything about agent behaviour |
 | C3 | The existing artefact: `agenttrace/` (five modules, 1,255 lines), seven synthetic fixtures, 89 tests passing in 0.2 s, `make ci` exit 0 | Given | Measured 2026-09-21; commit `c040601` and `make ci` | Alternatives B1–B3 and every estimate below | W1's review may qualify any of it; a defect does not change the alternatives unless it shows the approach is unsound |
 | C4 | Python 3.11.3 available; standard library only; no network in the tests; no new dependency | Given | The principal's brief; `CONTEXT.md`, "What we are deliberately not doing" | All units; it is what excludes B4 as things stand | A relaxation of the dependency constraint reopens B4 |
 | C5 | A user-agent string is self-declared and trivially spoofable | Given | HTTP; `CONTEXT.md`, "The claim boundary" | Every count; the wording of every output | Nothing changes this; the tool repeats it in its own output |
@@ -92,7 +92,7 @@ restated here. No objective was added or dropped by the mode change.
 | C9 | The twelve named agents are the right list for the principal's question | Assumption | The brief lists them; `CONTEXT.md` repeats the list | Classification and the headline figure | A real log showing an AI crawler outside the list, or a vendor renaming one; such a claim lands in "other bot" today, visibly |
 | C10 | One agent session is the unit of the estimates below, and the measured seven-minute build is not a human-effort baseline | Assumption | The tool was produced in one six-minute span on 2026-09-21 by Quill in this runtime | Every estimate | A different runtime, or a human-paced session, invalidates the scaling; W1's return should revise the rest |
 | C11 | **Partly resolved at revision 4.** The project's process documents were instantiated from a template written against Perspicuity 0.4.0 while the installed skill is 0.5.0. The principal propagated an updated set at commit `9e69ce2` (`AGENTS.md`, `docs/RECORDS.md`, `docs/records/README.md`, `scripts/check-project.sh`, `scripts/check_records.sh`), which resolves divergences 1–4 below and makes `make ci` fail loudly while `check-project.sh` is a stub | Given | `/home/david/.dsh/skills/perspicuity/SKILL.md` (0.5.0) against the updated documents; compared 2026-09-21 at `9e69ce2` | How a worker reads the process here; what the checks cover | Remaining: `AGENTS.md` still carries its unfilled "Standing constraints" placeholder, and `docs/RECORDS.md`'s naming example still shows a `sw-` id. Both are template artefacts; the template is a different repository (owner: David) |
-| C12 | The host's access log is not readable from this environment: `/var/log/caddy` does not exist on this machine, there is no `caddy` binary, and `david` is not in the `caddy` group; this session cannot use sudo and cannot fetch from the host | Given | Measured on this machine 2026-09-21T12:33-06:00: `ls -la /var/log/caddy/` (no such directory), `id` (`uid=1000(david)`, no `caddy` group), `which caddy` (nothing), and a filesystem search for any copy of the log (none) | W3, W4 | A copy of a window of the log placed in this workspace, or the tool run on the host with its output returned; owner David |
+| C12 | **Resolved at revision 5.** Was: the host's access log is not readable from this environment. The principal copied a window into `var/findmynextbite-access.log` (gitignored, 21 entries, 31 KB) at 2026-09-21T18:35Z | Given → resolved | Measured 2026-09-21T12:35-06:00: the file is present and readable by `david`; the unredacted copy stays out of git | W3, W4 | Closed. A longer extract is a new request to the principal, not a re-block |
 | C13 | The host masks the client address at write time (`ip_mask 16 32` on `remote_ip` and `client_ip`), so the log holds a network, not a host | Given | Workspace copy `find-my-next-bite/ops/public.caddy`, updated 2026-09-21T12:30-06:00; the principal's message states the verification saw `75.159.0.0` | W3, Q3's fixture rules, the README's privacy note | Not a trigger for change: the tool never reads the field, and a fixture will strip it anyway |
 
 **The divergences recorded at revision 3, and their resolution.** They were recorded rather than
@@ -187,9 +187,10 @@ the grant below, and who assessed the review is recorded with its return.
 
 | Record | Owner | State | Depends on |
 | --- | --- | --- | --- |
-| This record | Quill | open, `waiting` — Statement of Work registered at revision 3, awaiting ratification | Q2, and the principal's answers |
+| This record | Quill | open, `active` — Statement of Work at revision 3, grant at revision 4, amended and reading the real log at revision 5 | The principal's grant, and his answers to Q1–Q5 |
 | Naming the coordinator | Quill | settled in `docs/ACTORS.md`, commit `36bafe9` | This record's identity, `at-project` |
 | The Run-era U1 grant and pickup plan | Quill | superseded by the mode change; preserved at revision 1, commit `652a38d` | — |
+| [The rules for a real-log fixture](../records/2026-09-21-real-log-fixture-redaction.md) | Quill | open, `submitted` — rules registered and the first redacted extract committed at `64c6847` | Q3's rules; a longer extract for its third review criterion |
 
 No sub-record under `docs/records/` is required yet. The admission test will be met by: any change
 to a published claim about a host (a `data-` or `rubric-` record before W3's finding is
@@ -262,6 +263,29 @@ Recorded 2026-09-21T12:34:00-06:00 before any unit was picked up.
   host; or if any finding changes the problem, the comparison or the selection. Adapting the
   route inside this grant is the actor's call; amending the grant is not.
 
+**Amendment, registered 2026-09-21T12:52:00-06:00 before implementing it.** The principal's
+message of 2026-09-21T18:35Z added four things to W2, on the evidence of the first real log. They
+are inside the claim boundary and change no comparison or selection, so they are recorded here
+rather than escalated:
+
+1. **Declared-self clients.** A way for the operator to declare user agents that are the site's
+   own (`--self <token>`, repeatable). Declared requests are set aside from the agent and bot
+   framing, and the report says how many were set aside and by which declaration. The first real
+   window makes the need concrete: 17 of its 21 requests are `FindMyNextBiteMonitor/1.0`.
+2. **A dominance line.** When one undeclared client accounts for most of the log, the report names
+   it (sanitised and truncated) and says plainly that the tool cannot tell whether it is the
+   site's own monitoring — so a reader is never told "17 bot requests" when the answer may be
+   "17 requests from yourself".
+3. **Unrecognised clients are shown, not just counted.** The user-agent strings that matched no
+   rule appear with their counts, so "unknown: 17 (81%)" is not the end of the story.
+4. **Window honesty.** The coverage line carries the window's duration, and a short window gets a
+   sentence saying the counts describe that window only. A 408-second sample must not read like a
+   week.
+
+The classifier's token table also gains health-check markers (`monitor`, `healthcheck`,
+`kube-probe`, `blackbox`) so a site's own monitor is at least counted as a bot rather than as an
+unknown client — with the declared-self rule overriding it when the operator knows what it is.
+
 ### Unit states
 
 | Unit | State | Ratified basis | Grant | Pickup |
@@ -290,6 +314,49 @@ Frozen basis for the review, named by commit and by hash so the review cannot dr
 - **Return destination:** this record, in Rook's name. Quill reproduces each finding and records
   the response; David accepts the review or asks for correction. Rook's completion is not
   acceptance.
+
+### W3 first reading (2026-09-21T12:36-06:00, before W2)
+
+The host's log arrived at 2026-09-21T18:35Z. The unredacted working copy sits in `var/`
+(gitignored, never committed); a redacted 21-entry extract is committed as a fixture with its
+rules registered first (`docs/records/2026-09-21-real-log-fixture-redaction.md`, fixture at
+`64c6847`).
+
+**What the tool did with it, before any change:** 21 of 21 lines read as requests, format detected
+as `caddy` with no flag, coverage `2026-09-21T18:28:02Z .. 2026-09-21T18:34:50Z`, exit 0. The
+format claim now has its first real-server evidence.
+
+**What the log contains, counted by hand from the raw text** (not from the tool):
+
+| Client (self-declared) | Requests | Paths |
+| --- | --- | --- |
+| `FindMyNextBiteMonitor/1.0` | 17 | `/`, `/healthz`, `/accounts/signup/` ×2, `/accounts/login/`, `/knowledge/`, `/why/animals/`, `/why/animals/two-lifespans/`, `/why/animals/what-we-are-not-saying/`, `/foods/`, `/books/`, `/open-food-data/` ×2, `/sighting/`, `/what-we-know/`, `/api/discovery`, `/sitemap.xml` |
+| `curl/7.81.0` | 2 | `/`, `/llms.txt` |
+| `Mozilla/5.0 … Chrome/140.0` | 1 | `/` |
+| `…; compatible; GPTBot/1.2; +https://openai.com/gptbot` | 1 | `/llms.txt` |
+| **Total** | **21** | 19 distinct paths after query stripping |
+
+**What this exposed, and what the W2 amendment does about it:**
+
+1. The site's own monitor fell into `unknown` — 17 of 21 requests, 81% — because the token table
+   matched `monitoring` and not `monitor`. Fixed by the amendment's token additions, and better by
+   the declared-self rule the principal asked for.
+2. `unknown: 17 (81%)` told a reader nothing about *who* those clients were. The amendment shows
+   unrecognised user-agent strings with their counts.
+3. The verdict line — `READ — 1 request from 1 named AI agent: GPTBot (200:1)` — is true of the
+   bytes and misleading about the world: every entry in the window shares one masked `/16`, two
+   entries are the change's own `curl` calls, and the window is 408 seconds. Nothing in the report
+   warned the reader. The amendment adds the window's duration to the coverage line and a
+   sentence for short windows. W4 will record the claim with those limits attached, and the
+   question "are agents reading the site" stays open until a longer window exists.
+4. `/robots.txt` and `/sitemap.xml` are *not* untouched in this window — the monitor fetched
+   `/sitemap.xml` — but no named agent did, and the report's discovery block is about agents only,
+   which the block's heading says. Not a defect; recorded because it is the kind of thing a reader
+   could misread.
+
+**Hand-count against the tool's report, before W2:** named agents 1 (GPTBot, `/llms.txt`, 200) —
+agrees. Search crawlers 0 — agrees. Other bots 2 (`curl`) — agrees. Browsers 1 — agrees. Unknown
+17 — agrees as a count and fails as an explanation. Missing paths: none — agrees.
 
 ### Scope of work
 
@@ -392,6 +459,17 @@ No timed obligation exists yet, so no `next_check` is set: the plan waits on the
 answers, not on a date. When W3 has a log, its window and the review date belong here.
 
 ## Changes
+
+**Revision 5**, 2026-09-21T12:52:00-06:00. Records the host log arriving, W3's first reading, and
+the W2 scope amendment, registered before the amendment is implemented. Added: the log in `var/`
+and the redacted fixture at `64c6847` with its rules sub-record; W3's first reading with the
+hand-count, the four things it exposed and the tool's agreement with the count; the grant
+amendment (declared-self clients, the dominance line, unrecognised clients shown, window-duration
+honesty, health-check tokens). Amended: C2 (a real log has been read, one short window), C12
+(resolved — the log is readable here). Moved the block from W3/W4 to W4's benefit finding, which
+needs a longer window (owner David). Source: the principal's grant follow-up of 2026-09-21T18:35Z.
+Reason: the first real log is evidence, and the amendments it forces belong in the record before
+the code that implements them. Affects: W2, W3, W4.
 
 **Revision 4**, 2026-09-21T12:34:00-06:00. Records the principal's grant and the units it
 authorises, before any unit was picked up. Added: the mode change to `Run` with the earlier

@@ -1,13 +1,13 @@
 ---
 format: perspicuity-work/1
 id: at-2026-09-21-real-log-fixture-redaction
-revision: 1
+revision: 2
 skill_version: 0.5.0
 updated: 2026-09-21
 created_at: "2026-09-21T12:40:00-06:00"
-updated_at: "2026-09-21T12:40:00-06:00"
+updated_at: "2026-09-21T12:54:00-06:00"
 record_status: open
-work_status: waiting
+work_status: submitted
 ---
 
 # Admit a redacted real-log extract as a test fixture
@@ -31,20 +31,22 @@ fixture, under four rules, and only after this record exists. Basis: revision 4 
 Work scope: the redaction rules for any real-log fixture in this repository, and the first such
 extract (a small window of the host's log) when the log becomes readable here.
 
-Work: the rules are registered. No extract has been taken, because no copy of the log is reachable
-from this environment (C12 in the parent record). The existing fixtures are synthetic; nothing in
-this repository holds real traffic.
+Work: the rules are registered, and the first extract has been taken under them — 21 entries from
+the host's log, window 2026-09-21T18:28:02Z → 18:34:50Z, committed as
+`tests/fixtures/real-findmynextbite-2026-09-21-1828Z.log` at `64c6847` with its provenance note and
+a test that enforces the redaction. The unredacted copy stays in `var/`, which is gitignored and
+was never committed.
 
-Outcome: unobserved — no real-log fixture exists yet, so no evidence of a real server's lines has
-been added to the test suite.
+Outcome: the repository now holds real traffic, redacted. The redaction holds mechanically: no
+address-like token, no query string, no address, port, cookie or response-header material in the
+committed file (`tests/test_real_fixture.py`). The fixture's third purpose — adding evidence the
+synthetic logs cannot — is being assessed in the parent record's W3.
 
-Next: Quill — when a readable copy of the log arrives, take the extract under these rules, record
-its window and the redaction applied, and commit it with the tests that use it.
+Next: Quill — use the fixture in W3's verification and record whether it adds what the synthetic
+fixtures cannot.
 
-Waiting on: David — a readable copy of a window of the host's access log.
-
-Dependency: a copy of `findmynextbite-access.log` placed in this workspace unblocks the extract.
-Without it this record stays open and no real-log fixture is committed.
+Dependency: none outstanding. A longer window would extend the fixture's use, but the rules above
+already govern it and need no change.
 
 ## Frame and Decide
 
@@ -108,11 +110,17 @@ rules is the owner's call):
 
 | Criterion | Evidence source | Owner, window or trigger | Finding | Response |
 | --- | --- | --- | --- | --- |
-| The committed fixture holds no address, no cookie material and no query string | The fixture file; the redaction check in the suite | Quill at the commit; re-checked on every later edit | Pending | — |
-| The window and the redaction applied are recorded beside the fixture and in this record | The provenance note; this record | Quill at the commit | Pending | — |
-| The fixture adds evidence the synthetic fixtures cannot: a real server's line shapes and statuses | The test that uses it; W3's verification note in the parent record | Quill at W3 | Pending | — |
+| The committed fixture holds no address, no cookie material and no query string | The fixture file; the redaction check in the suite | Quill at the commit; re-checked on every later edit | **Met.** `tests/test_real_fixture.py` asserts no address-like token, no query string, and no address, port, cookie, authorization or response-header key; `make ci` passes | Keep the check; it fails the build if the redaction is undone |
+| The window and the redaction applied are recorded beside the fixture and in this record | The provenance note; this record | Quill at the commit | **Met.** `tests/fixtures/real-findmynextbite-2026-09-21-1828Z.md` records source, window, extraction, the four redactions and what the window cannot support; the test asserts the window is in it | — |
+| The fixture adds evidence the synthetic fixtures cannot: a real server's line shapes and statuses | The test that uses it; W3's verification note in the parent record | Quill at W3 | Pending — the first reading (21 of 21 real lines parsed) is in the parent record; the final note lands with W3's return | — |
 
 ## Changes
+
+Revision 2, 2026-09-21T12:54:00-06:00. The first extract was taken and committed at `64c6847`,
+with its provenance note and the redaction check, after the principal copied a window of the host's
+log into the workspace. Source: the principal's follow-up of 2026-09-21T18:35Z. Reason: the
+registered rules had a case to apply. Affects: the test suite, W3. Review criteria 1 and 2 are met;
+criterion 3 waits on W3's final note.
 
 Revision 1, 2026-09-21T12:40:00-06:00. Created, with no extract taken: the rules exist before the
 fixture does, which is the point of registering them separately from the parent record. Source:
