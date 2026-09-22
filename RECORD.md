@@ -1,11 +1,11 @@
 ---
 format: perspicuity-work/1
 id: at-project
-revision: 8
+revision: 9
 skill_version: 0.5.0
 updated: 2026-09-21
 created_at: "2026-09-21T11:48:05-06:00"
-updated_at: "2026-09-21T13:22:00-06:00"
+updated_at: "2026-09-21T13:30:00-06:00"
 record_status: open
 work_status: accepted
 next_check: 2026-09-28
@@ -41,11 +41,11 @@ Next: David — at the 2026-09-28 checkpoint, pull a week-long extract that nobo
 
 Then: Quill — read that extract against the same criteria, have the counts independently checked, and record whether the finding changes; the record closes only when that obligation is met, cancelled or transferred.
 
-Waiting on: David — the untouched week-long extract. Nothing else is outstanding: acceptance is recorded, the W4 correction stands, and the two 404s the window surfaced have been handed to Find My Next Bite through him.
+Waiting on: time, not a permission — the untouched week-long extract is pre-authorised (standing permission granted 2026-09-21) and David will bring it when the week has elapsed. Nothing else is outstanding: acceptance is recorded, the W4 correction stands, and the two 404s are recorded and closed as not raised.
 
 Blocked: only W4's benefit finding. W1–W3 are delivered; the review criteria that depend on a longer window stay pending rather than assumed.
 
-Dependency: a fresh, longer extract from the host (owner David) at the 2026-09-28 checkpoint, or the question is re-asked then.
+Dependency: the 2026-09-28 checkpoint. Extract supply is pre-authorised, so no request stands between this record and its last obligation; if the date passes without one, Quill records the question as still open rather than letting it lapse.
 
 Authority: the principal's ratification and grant of 2026-09-21, recorded in Act; his Statement of Work request of the same day (revision 3); and his brief of the same day (revision 1). David retains publication (Q4 answered: not in scope), spending, outbound messages, external agreements, dependencies, and any further change to a host's configuration.
 
@@ -566,9 +566,10 @@ should be one nobody was touching**, which is what the 2026-09-28 checkpoint ask
 responses are `GET /foods/impossible-beef/` and a malformed `GET /foods//`, both `404`, both from
 `FindMyNextBiteMonitor/1.0`, at 18:34:5x on 2026-09-21 (the second is a path with a doubled slash,
 which no route should produce). They are Find My Next Bite's health check, not this project's
-tool, and the principal has reported them to David; whether they are raised on that project's
-coordination board is his decision. Recorded here with their evidence and otherwise left alone —
-**nothing in this repository touches another project's health check.**
+tool. **Disposition (2026-09-21): recorded, not raised** — David decided against putting them on
+that project's board for now. Recorded here with their evidence and otherwise left alone;
+**nothing in this repository touches another project's health check**, and no action is owed on
+the other one either. Revisit only if that health check is examined for its own reasons.
 
 **What it establishes, and what it does not.** It establishes that nobody had ever checked, which
 is the reason this project exists, and that in the first eight and a half minutes of ever looking
@@ -671,13 +672,24 @@ from evidence of later benefit, and neither is inferred from the other.
 | R5 | The first real-host finding names its log source and window, and its headline counts are reproduced by an independent hand count | W3's return above; Marlow's check | Marlow at W3; David accepts W4 | **Met.** Marlow reproduced every revision-6 headline figure from the raw log, in text and JSON, and verified the fixture's redaction exhaustively. It found two documentation defects (M1, M2), both fixed | The record's own text was the only thing wrong; the tool and the fixture needed no change |
 | R6 | `make ci` exits 0 and `make records` is clean at every return | The command output recorded with each return | Quill at every return | **Met.** 140 tests OK, `make ci` exit 0, `make records` clean at `6785c26` | — |
 | R7 | Delivery is not treated as benefit: "the tool runs" and "an agent was observed" stay distinct | This record and the W4 finding | David at acceptance | **Met, and demonstrated.** The tool ran, parsed every real line, and reported one claimed agent; the principal's answer showed that claim was his own test, and W4 was corrected to "zero external AI agents observed" rather than left standing. The two findings were never merged | The correction is recorded as a revision, with the earlier text preserved in `dc34a32` |
-| R9 | The two 404s the window surfaced belong to another project and are not fixed here | W4's "handed on, not fixed" paragraph: `GET /foods/impossible-beef/` and `GET /foods//`, both 404, both `FindMyNextBiteMonitor/1.0`, 2026-09-21 | David, who has the report; whether to raise them on Find My Next Bite's board is his decision | **Recorded, left alone.** Evidence is in W4; nothing in this repository touches another project's health check | No action here by design |
-| R8 | The promised observation: an **untouched** week-long window, which would turn W4's eight-minute note into a finding about agent traffic | A fresh extract nobody was touching; the tool's report over it | David provides; Quill reports and has it independently checked; checkpoint 2026-09-28 | Pending — the commitment recorded at `review_due`. The refreshed 510-second extract was still produced by a person at the keyboard, so it is not the observation R8 asks for | If no untouched extract exists by the checkpoint, Quill re-asks and records that the question is still open |
+| R9 | The two 404s the window surfaced belong to another project and are not fixed here | W4's "handed on, not fixed" paragraph: `GET /foods/impossible-beef/` and `GET /foods//`, both 404, both `FindMyNextBiteMonitor/1.0`, 2026-09-21 | David — answered 2026-09-21 | **Recorded, not raised, by the principal's decision of 2026-09-21.** He decided against raising them on Find My Next Bite's board for now; the finding stays with its evidence | **Closed.** No action here by design, and none on that project either; if the health check is revisited, the evidence is above |
+| R8 | The promised observation: an **untouched** week-long window, which would turn W4's eight-minute note into a finding about agent traffic | A fresh extract nobody was touching; the tool's report over it | David provides under a standing permission granted 2026-09-21 (no request per extract); Quill reports and has it independently checked; checkpoint 2026-09-28 | **Pending, and waiting on time rather than on permission.** The refreshed 510-second extract was still produced by a person at the keyboard, so it is not the observation R8 asks for | Nothing to request: the supply is pre-authorised and the extract will be brought when the week has elapsed. If 2026-09-28 passes with no extract, Quill records that the question is still open |
 
 `next_check` and `review_due` are both set to 2026-09-28: R8 is the one timed obligation, and it
 is a fallback date for an event whose real trigger is the principal pulling a longer extract.
 
 ## Changes
+
+**Revision 9**, 2026-09-21T13:30:00-06:00. Records two decisions of the principal and closes the
+one finding they settle. R9 — the two Find My Next Bite 404s — moves from "handed to David" to
+**recorded, not raised, by his decision of 2026-09-21**, and the finding is closed; a finding left
+awaiting an answer the decider has already given is the stale-pending shape this corpus exists to
+avoid. R8 — the week-long observation — now records that extract supply is under a **standing
+permission granted 2026-09-21**, so the checkpoint waits on time rather than on a request, and the
+record's `Waiting on` and `Dependency` lines say so. Unchanged: `work_status: accepted`,
+`record_status: open`, `next_check: 2026-09-28`, and every other finding. Source: the principal's
+decisions of 2026-09-21. Reason: an answered question is recorded as answered. Affects: R8, R9 and
+the record's next-action lines.
 
 **Revision 8**, 2026-09-21T13:22:00-06:00. Records the principal's acceptance of the delivery and
 closes the commitment accounting. Added: the acceptance finding in the Review table — assessor
