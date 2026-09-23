@@ -1,11 +1,11 @@
 ---
 format: perspicuity-work/1
 id: at-project
-revision: 12
+revision: 13
 skill_version: 0.6.0
 updated: 2026-09-22
 created_at: "2026-09-21T11:48:05-06:00"
-updated_at: "2026-09-22T20:44:00-06:00"
+updated_at: "2026-09-22T23:52:39-06:00"
 record_status: open
 work_status: accepted
 next_check: 2026-09-28
@@ -873,7 +873,21 @@ from evidence of later benefit, and neither is inferred from the other.
 `next_check` and `review_due` are both set to 2026-09-28: R8 is the one timed obligation, and it
 is a fallback date for an event whose real trigger is the principal pulling a longer extract.
 
+## Publication, 2026-09-22
+
+David selected option B of [the tools decision](https://github.com/perspicuity-ai/perspicuity) on 2026-09-22: this repository becomes public under the Apache License 2.0. His words: "public for the tools, Apache".
+
+Disclosure pass, run before the visibility change over every commit on every branch, by Claude in the website-review session. It searched added lines for private keys, access tokens, assigned secrets, IP addresses, home-directory paths, email addresses and server paths, and searched file names for `.env` files and key files.
+
+- No private key, token, assigned secret, server path or key file was found.
+- Local home-directory paths appear in notes (9 lines). IP addresses appear only in fixtures, from the documentation ranges 203.0.113.0/24 and 198.51.100.0/24 and published crawler ranges, plus `75.159.0.0`, a /16 network the host logged after masking; the real-log fixture removes client addresses entirely. Two crawler contact addresses appear inside user-agent strings.
+- Commit author email: `david.nelson.elske@gmail.com`, which is already public in the commits of `perspicuity-ai/decision-toolkit`.
+
+None of these was judged a reason to hold publication or rewrite history. The scan is a pattern search, not a guarantee.
+
 ## Changes
+
+Revision 13, 2026-09-22T23:52:39-06:00. Changed: the repository gains the Apache License 2.0 (`LICENSE`, and a Licence section in the README), and this record gains "Publication, 2026-09-22" with the disclosure pass that preceded making the repository public. Source: David's selection of option B in the tools decision, 2026-09-22. Reason: the tools decision requires a licence and a recorded disclosure pass before the visibility change. Preserved: revision 12 and earlier stand as written.
 
 **Revision 12**, 2026-09-22T20:44:00-06:00 (2026-09-23T02:44:00Z). Records the batch
 orchestrator's acceptance of U6 at 2026-09-23T02:42:21Z and releases Fen's claim. Changed:

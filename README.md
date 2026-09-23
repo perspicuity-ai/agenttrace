@@ -301,3 +301,7 @@ redacted extract of the host's real log, whose provenance and redaction rules ar
 beside it. They make no network call and read nothing outside this repository. The choices behind the tool, with the measurements taken for
 them, are in [`docs/DESIGN.md`](docs/DESIGN.md); the project's decision record is
 [`RECORD.md`](RECORD.md).
+
+## Licence
+
+Apache License 2.0. See [LICENSE](LICENSE).
