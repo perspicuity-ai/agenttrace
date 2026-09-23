@@ -1,13 +1,13 @@
 ---
 format: perspicuity-work/1
 id: at-project
-revision: 11
+revision: 12
 skill_version: 0.6.0
 updated: 2026-09-22
 created_at: "2026-09-21T11:48:05-06:00"
-updated_at: "2026-09-22T20:41:00-06:00"
+updated_at: "2026-09-22T20:44:00-06:00"
 record_status: open
-work_status: submitted
+work_status: accepted
 next_check: 2026-09-28
 ---
 
@@ -25,7 +25,7 @@ Principal and decider: David — owns the objectives and the ratification. Retai
 
 Work owner: Quill (coordinator). Rook is named as the W1 reviewer and Marlow as the W3 assessor; neither is the author of the work each checks. Both are in `docs/ACTORS.md`. Increment 2, unit U6, is owned by Fen (worker-U6 subagent), who acts as this repository's coordinator for U6 only; Quill keeps everything else, including R8.
 
-Claimed by: Fen (worker-U6 subagent), for U6 only, since "2026-09-23T02:34:02Z"; returned at revision 11.
+Claimed by: Fen (worker-U6 subagent), for U6 only, since "2026-09-23T02:34:02Z"; returned at revision 11, accepted at 2026-09-23T02:42:21Z. The claim is released.
 
 Mode: `Run`. Increment 2 runs under Grant U6 of the tools-as-skills batch, recorded under U6 in Act, and stops at its return. Increment 1: the principal ratified B1-amended and granted W1–W4 on 2026-09-21, so the record carries the granted units through to their returns and stops there. Earlier mode: `Plan`, from 2026-09-21T12:02:00-06:00 until this grant, which registered the Statement of Work (revision 3) and stopped at the requested grant. Earlier still: `Run`, 11:52:40–11:59:00-06:00, under which the tool was built ahead of the plan and committed at `c040601`.
 
@@ -37,19 +37,17 @@ Work scope: increment 2 is unit U6 of the tools-as-skills batch: this record sta
 
 Review due: 2026-09-28 — the one outstanding obligation, kept because the delivery is accepted without the later observation being satisfied. David pulls a week-long extract that nobody was touching, per R8; Quill reads it against the same criteria. The record stays open: closing it now would drop the only check that can still change W4.
 
-Work: U6 is **submitted** at revision 11 to the batch orchestrator. The gate is recorded under U6 in Act, and Q6 is registered with David as owner. U6 is not accepted until the orchestrator accepts it. W1, W2, W3 and W4 are **delivered and accepted** by David on 2026-09-21, on the basis of revision 7 (`554d4ff`, reformatted at `9f1ca7a`, including the W4 correction he supplied). Their evidence is in Act, and every result in the work scope is accounted for below it. Revision 8 recorded the acceptance and the commitment accounting. W1: Rook's independent review of `c040601`, with the hand-count reproduced, the two promises attacked and eleven findings, none a stop condition. W2: the amended unit delivered at `6785c26` — the eleven findings answered, the drift policy, honest discovery verdicts, `--self`, the dominance line, unrecognised-client visibility and window honesty — 140 offline tests, `make ci` exit 0. W3: the first real log read, hand-counted, and its extract committed redacted under the registered rules. W4: the finding recorded, thin, with its window and its limits stated.
+Work: U6 is **delivered and accepted**. The batch orchestrator, the receiver Grant U6 names, accepted it at 2026-09-23T02:42:21Z (see U6 in Act). The gate is recorded under U6, and Q6 is registered with David as owner. W1, W2, W3 and W4 are **delivered and accepted** by David on 2026-09-21, on the basis of revision 7 (`554d4ff`, reformatted at `9f1ca7a`, including the W4 correction he supplied). Their evidence is in Act, and every result in the work scope is accounted for below it. Revision 8 recorded the acceptance and the commitment accounting. W1: Rook's independent review of `c040601`, with the hand-count reproduced, the two promises attacked and eleven findings, none a stop condition. W2: the amended unit delivered at `6785c26` — the eleven findings answered, the drift policy, honest discovery verdicts, `--self`, the dominance line, unrecognised-client visibility and window honesty — 140 offline tests, `make ci` exit 0. W3: the first real log read, hand-counted, and its extract committed redacted under the registered rules. W4: the finding recorded, thin, with its window and its limits stated.
 
 Outcome: **delivery accepted, benefit not yet observed.** The tool is built, reviewed, corrected and verified against a real server, and the first finding is recorded — no external AI agent traffic in the observed windows, with the single named-agent line in them being the operator's own test. Whether agents read the site remains unobserved and is the obligation at `next_check`. On the format claim: the format claim is confirmed against a real server — 42 of 42 refreshed Caddy JSON lines read, detected with no flag, window 2026-09-21T18:28:02Z → 18:36:32Z (510.40 seconds). **Zero external AI agent traffic was observed in that window.** The single named-agent line in it is synthetic: David has answered that he generated it himself with `curl` while verifying that the logging he had just switched on worked (see the W4 correction below). 38 of the 42 requests are the site's own monitor. Nothing about how agents treat the site is established, and the finding says so. Increment 2 changes no outcome: it records a gate, and no tool, host or log changed.
 
-Next: the batch orchestrator — review U6's return against Grant U6, then accept it or send it back.
-
-Also pending: David — at the 2026-09-28 checkpoint, pull a week-long extract that nobody was touching (the R8 observation).
+Next: David — at the 2026-09-28 checkpoint, pull a week-long extract that nobody was touching (the R8 observation).
 
 Then: Quill — read that extract against the same criteria, have the counts independently checked, and record whether the finding changes; in the same entry, put Q6 to David, which is the review trigger registered under U6. The record closes only when these obligations are met, cancelled or transferred.
 
 Also pending: David — answer Q6 when Quill puts it to him at the R8 reading, or on 2026-09-28 if no extract has come.
 
-Waiting on: the batch orchestrator, for U6's acceptance. For R8, time rather than a permission — the untouched week-long extract is pre-authorised (standing permission granted 2026-09-21) and David will bring it when the week has elapsed. Nothing else is outstanding for increment 1: acceptance is recorded, the W4 correction stands, and the two 404s are recorded and closed as not raised.
+Waiting on: for R8, time rather than a permission — the untouched week-long extract is pre-authorised (standing permission granted 2026-09-21) and David will bring it when the week has elapsed. Nothing else is outstanding for increment 1: acceptance is recorded, the W4 correction stands, and the two 404s are recorded and closed as not raised.
 
 Blocked: only W4's benefit finding. W1–W3 are delivered; the review criteria that depend on a longer window stay pending rather than assumed.
 
@@ -666,7 +664,7 @@ recorded gate instead of a skill. U6 records that gate here. It makes no selecti
 
 | Unit | State | Ratified basis | Grant | Claim |
 | --- | --- | --- | --- | --- |
-| U6 | submitted at revision 11; the gate entry is below | David's selection of course D, 2026-09-23T02:27:40Z, on parent revision 2 (`7d60cdef`) | Grant U6 above, parent revision 4 (`16ab54ff`) | Fen (worker-U6 subagent), since "2026-09-23T02:34:02Z" |
+| U6 | accepted at 2026-09-23T02:42:21Z by the batch orchestrator; submitted at revision 11 | David's selection of course D, 2026-09-23T02:27:40Z, on parent revision 2 (`7d60cdef`) | Grant U6 above, parent revision 4 (`16ab54ff`) | Fen (worker-U6 subagent), since "2026-09-23T02:34:02Z" |
 
 **Claim.** Claimed by: Fen (worker-U6 subagent), since: "2026-09-23T02:34:02Z". The batch
 orchestrator dispatched this worker into this repository to act as its coordinator for U6 only.
@@ -804,6 +802,14 @@ parent's R4, this unit changes this file only. It adds no service, store, creden
 process, and it changes no tool code, test, host, log or access setting. Unresolved: Q6 (David, at
 the R8 reading), and R8 itself (David and Quill, 2026-09-28).
 
+**Acceptance.** Accepted by the batch orchestrator, the receiver Grant U6 names, at
+2026-09-23T02:42:21Z, against Grant U6. It found both commits (`5ff54bd`, `3bc507f`) on local main,
+with only this file changed. It checked that the gate states what is withheld, why, and both lift
+conditions, and that Q6 has David as owner and a trigger. It also checked both commits' trailers
+and re-ran `make records` and `make ci`, which passed. Where it lives: the parent record's "Batch
+run" table and its "U6 review" section, at Perspicuity commit `bc23b1f0`. The four proposals in Fen's return are registered in the parent record as
+follow-ups for Quill, and U6 does not act on them.
+
 ### Out of scope
 
 | Not covered | Reason |
@@ -868,6 +874,14 @@ from evidence of later benefit, and neither is inferred from the other.
 is a fallback date for an event whose real trigger is the principal pulling a longer extract.
 
 ## Changes
+
+**Revision 12**, 2026-09-22T20:44:00-06:00 (2026-09-23T02:44:00Z). Records the batch
+orchestrator's acceptance of U6 at 2026-09-23T02:42:21Z and releases Fen's claim. Changed:
+`work_status` from `submitted` to `accepted`; the U6 state row; Current position's claim, work and
+waiting-on lines; `Next` returns to David for R8, and the pending line for the orchestrator is
+removed. Added: the acceptance paragraph under U6, which says where the acceptance lives. Source: the
+orchestrator's message to Fen, and the parent record at `bc23b1f0`. Reason: acceptance is recorded separately from the return. Affects: U6. R8, Q6 and
+every other finding are unchanged.
 
 **Revision 11**, 2026-09-22T20:41:00-06:00 (2026-09-23T02:41:00Z). Records the `agenttrace` skill
 gate for U6 and submits the unit to the batch orchestrator. Added under U6 in Act: the gate
