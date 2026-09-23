@@ -1,13 +1,13 @@
 ---
 format: perspicuity-work/1
 id: at-project
-revision: 9
-skill_version: 0.5.0
-updated: 2026-09-21
+revision: 10
+skill_version: 0.6.0
+updated: 2026-09-22
 created_at: "2026-09-21T11:48:05-06:00"
-updated_at: "2026-09-21T13:30:00-06:00"
+updated_at: "2026-09-22T20:38:10-06:00"
 record_status: open
-work_status: accepted
+work_status: active
 next_check: 2026-09-28
 ---
 
@@ -23,21 +23,27 @@ next_check: 2026-09-28
 
 Principal and decider: David — owns the objectives and the ratification. Retains spending, outbound messages, external agreements, the release word for publication, any new dependency, and every decision about a host's configuration and what it stores.
 
-Work owner: Quill (coordinator). Rook is named as the W1 reviewer and Marlow as the W3 assessor; neither is the author of the work each checks. Both are in `docs/ACTORS.md`.
+Work owner: Quill (coordinator). Rook is named as the W1 reviewer and Marlow as the W3 assessor; neither is the author of the work each checks. Both are in `docs/ACTORS.md`. Increment 2, unit U6, is owned by Fen (worker-U6 subagent), who acts as this repository's coordinator for U6 only; Quill keeps everything else, including R8.
 
-Mode: `Run` — the principal ratified B1-amended and granted W1–W4 on 2026-09-21, so the record carries the granted units through to their returns and stops there. Earlier mode: `Plan`, from 2026-09-21T12:02:00-06:00 until this grant, which registered the Statement of Work (revision 3) and stopped at the requested grant. Earlier still: `Run`, 11:52:40–11:59:00-06:00, under which the tool was built ahead of the plan and committed at `c040601`.
+Claimed by: Fen (worker-U6 subagent), for U6 only, since "2026-09-23T02:34:02Z".
 
-Decision: `selected` — David ratified the recommended course B1-amended and granted units W1–W4 on 2026-09-21T12:33:00-06:00, on the basis of revision 3 of this record. The selection is his; the recommendation was Quill's; nothing outside the granted scope is authorised.
+Mode: `Run`. Increment 2 runs under Grant U6 of the tools-as-skills batch, recorded under U6 in Act, and stops at its return. Increment 1: the principal ratified B1-amended and granted W1–W4 on 2026-09-21, so the record carries the granted units through to their returns and stops there. Earlier mode: `Plan`, from 2026-09-21T12:02:00-06:00 until this grant, which registered the Statement of Work (revision 3) and stopped at the requested grant. Earlier still: `Run`, 11:52:40–11:59:00-06:00, under which the tool was built ahead of the plan and committed at `c040601`.
 
-Work scope: units W1–W4 as registered in revision 3 — W1 an independent review of the artefact, W2 format-drift diagnostics and the unrecognised-format policy, W3 verification against a real access log, W4 the first real-host finding — plus restoring the real project checks in `scripts/check-project.sh`, which the propagated process documents replaced with a deliberately failing stub.
+Decision, increment 2: `inherited` — David selected course D of the Perspicuity record `tools-as-skills-2026-09-22`, which gives `agenttrace` a recorded gate instead of a skill. U6 records that gate and selects nothing.
+
+Decision, increment 1: `selected` — David ratified the recommended course B1-amended and granted units W1–W4 on 2026-09-21T12:33:00-06:00, on the basis of revision 3 of this record. The selection is his; the recommendation was Quill's; nothing outside the granted scope is authorised.
+
+Work scope: increment 2 is unit U6 of the tools-as-skills batch: this record states that a skill for `agenttrace` is withheld, why, and what would lift the gate, and registers the open choice with David as owner and a review trigger. Increment 1, accepted on 2026-09-21, is units W1–W4 as registered in revision 3 — W1 an independent review of the artefact, W2 format-drift diagnostics and the unrecognised-format policy, W3 verification against a real access log, W4 the first real-host finding — plus restoring the real project checks in `scripts/check-project.sh`, which the propagated process documents replaced with a deliberately failing stub.
 
 Review due: 2026-09-28 — the one outstanding obligation, kept because the delivery is accepted without the later observation being satisfied. David pulls a week-long extract that nobody was touching, per R8; Quill reads it against the same criteria. The record stays open: closing it now would drop the only check that can still change W4.
 
-Work: W1, W2, W3 and W4 are **delivered and accepted** by David on 2026-09-21, on the basis of revision 7 (`554d4ff`, reformatted at `9f1ca7a`, including the W4 correction he supplied). Their evidence is in Act, and every result in the work scope is accounted for below it. This revision records the acceptance and the commitment accounting; nothing else changed. W1: Rook's independent review of `c040601`, with the hand-count reproduced, the two promises attacked and eleven findings, none a stop condition. W2: the amended unit delivered at `6785c26` — the eleven findings answered, the drift policy, honest discovery verdicts, `--self`, the dominance line, unrecognised-client visibility and window honesty — 140 offline tests, `make ci` exit 0. W3: the first real log read, hand-counted, and its extract committed redacted under the registered rules. W4: the finding recorded, thin, with its window and its limits stated.
+Work: U6 is **active**: claimed, with its pickup plan registered under U6 in Act before the gate entry is written. W1, W2, W3 and W4 are **delivered and accepted** by David on 2026-09-21, on the basis of revision 7 (`554d4ff`, reformatted at `9f1ca7a`, including the W4 correction he supplied). Their evidence is in Act, and every result in the work scope is accounted for below it. This revision records the acceptance and the commitment accounting; nothing else changed. W1: Rook's independent review of `c040601`, with the hand-count reproduced, the two promises attacked and eleven findings, none a stop condition. W2: the amended unit delivered at `6785c26` — the eleven findings answered, the drift policy, honest discovery verdicts, `--self`, the dominance line, unrecognised-client visibility and window honesty — 140 offline tests, `make ci` exit 0. W3: the first real log read, hand-counted, and its extract committed redacted under the registered rules. W4: the finding recorded, thin, with its window and its limits stated.
 
 Outcome: **delivery accepted, benefit not yet observed.** The tool is built, reviewed, corrected and verified against a real server, and the first finding is recorded — no external AI agent traffic in the observed windows, with the single named-agent line in them being the operator's own test. Whether agents read the site remains unobserved and is the obligation at `next_check`. On the format claim: the format claim is confirmed against a real server — 42 of 42 refreshed Caddy JSON lines read, detected with no flag, window 2026-09-21T18:28:02Z → 18:36:32Z (510.40 seconds). **Zero external AI agent traffic was observed in that window.** The single named-agent line in it is synthetic: David has answered that he generated it himself with `curl` while verifying that the logging he had just switched on worked (see the W4 correction below). 38 of the 42 requests are the site's own monitor. Nothing about how agents treat the site is established, and the finding says so.
 
-Next: David — at the 2026-09-28 checkpoint, pull a week-long extract that nobody was touching (the R8 observation).
+Next: Fen — write the gate entry under U6 and return it to the batch orchestrator.
+
+Also pending: David — at the 2026-09-28 checkpoint, pull a week-long extract that nobody was touching (the R8 observation).
 
 Then: Quill — read that extract against the same criteria, have the counts independently checked, and record whether the finding changes; the record closes only when that obligation is met, cancelled or transferred.
 
@@ -47,7 +53,7 @@ Blocked: only W4's benefit finding. W1–W3 are delivered; the review criteria t
 
 Dependency: the 2026-09-28 checkpoint. Extract supply is pre-authorised, so no request stands between this record and its last obligation; if the date passes without one, Quill records the question as still open rather than letting it lapse.
 
-Authority: the principal's ratification and grant of 2026-09-21, recorded in Act; his Statement of Work request of the same day (revision 3); and his brief of the same day (revision 1). David retains publication (Q4 answered: not in scope), spending, outbound messages, external agreements, dependencies, and any further change to a host's configuration.
+Authority, increment 2: Grant U6, ratified by David at 2026-09-23T02:32:38Z. The card is copied under U6 in Act, and it permits changes to this file only. Authority, increment 1: the principal's ratification and grant of 2026-09-21, recorded in Act; his Statement of Work request of the same day (revision 3); and his brief of the same day (revision 1). David retains publication (Q4 answered: not in scope), spending, outbound messages, external agreements, dependencies, and any further change to a host's configuration.
 
 | Stage | began_at | registered_at / exact basis revision | finished_at |
 | --- | --- | --- | --- |
@@ -615,6 +621,78 @@ implicit.
 | R8 — the untouched week-long observation | **Outstanding, not blocked** | This is the obligation that keeps the record open; owner David, 2026-09-28 |
 | Publication (objective O2) | **Not started, stopped by decision for now** | Q4: publication was not in scope for this grant; it needs the release word, not more work |
 
+### U6 — record the `agenttrace` skill gate (tools-as-skills batch)
+
+Increment 2 of this record, opened 2026-09-23T02:34:02Z. Increment 1 stays accepted as recorded
+above, and R8 is unchanged.
+
+**Where it comes from.** The Perspicuity repository's record `tools-as-skills-2026-09-22`
+(`docs/initiatives/tools-as-skills-2026-09-22/WORK.md` in that repository) asked how David's three
+small tools could run at the moment they are useful. David selected its course D on 2026-09-23.
+Under course D, `siteplan` and `sitewalk` get skills beside their tools, and `agenttrace` gets a
+recorded gate instead of a skill. U6 records that gate here. It makes no selection of its own.
+
+**Grant U6, as ratified.** Copied from the parent record, where David ratified it at
+2026-09-23T02:32:38Z (parent revision 4, commit `16ab54ff`):
+
+- For: a worker subagent in the `agenttrace` repository.
+- Serves: course D → the parent's O2 (the claim boundary survives the conversion) and O5 (the
+  conversion adds no new obligation).
+- Intent: `agenttrace` stays a tool until a log can support its claim, and the choice that would
+  lift the gate is registered as David's, with a trigger.
+- Done when: this repository's record states that a skill is withheld, why, and what would lift
+  the gate (a log path, pulled to the workstation or served by a single endpoint, and a window
+  that supports a weekly claim). The open choice is registered with David as owner and a review
+  trigger.
+- Ship to: this `RECORD.md` at a commit; the receiver reads it.
+- Includes / Excludes: this `RECORD.md` / a `SKILL.md`, and any server, log or access change. The
+  batch's cards also keep its general exclusions, which add any change to the tool's behaviour,
+  flags, output or claim boundary.
+- Tolerances: four hours of wall time from pickup, and three failed attempts at any one check.
+- Escalate if: the problem, comparison or selection changes; a tolerance is exceeded; an excluded
+  target is needed.
+- Return to: the parent record's Act section, with the commit revision. The batch orchestrator
+  writes it there from the worker's report.
+- Accepted by: the batch orchestrator, labelled `Primary` in the parent record. It is not the
+  author of this unit.
+- Granted by: David, on ratifying the batch's cards; basis the parent record at revision 3
+  (`b15aa50f`).
+
+| Unit | State | Ratified basis | Grant | Claim |
+| --- | --- | --- | --- | --- |
+| U6 | active | David's selection of course D, 2026-09-23T02:27:40Z, on parent revision 2 (`7d60cdef`) | Grant U6 above, parent revision 4 (`16ab54ff`) | Fen (worker-U6 subagent), since "2026-09-23T02:34:02Z" |
+
+**Claim.** Claimed by: Fen (worker-U6 subagent), since: "2026-09-23T02:34:02Z". The batch
+orchestrator dispatched this worker into this repository to act as its coordinator for U6 only.
+The parent's answer to its Q4 says such workers name themselves, so the worker chose Fen at pickup.
+Quill remains this repository's coordinator.
+
+**Pickup plan, registered before the gate entry.**
+
+1. Read the grant, the parent's basis for the gate and this record. The parent's basis is its
+   frame, its question 2 (local or hosted), question 5's conversion test, point 4 of how the claim
+   boundary survives, course E, the selection, the U6 row, its Q5 and its criterion R4. This step
+   is done.
+2. Check the parent's log facts against this record, and against the workspace copies of the
+   host's Caddy configuration, reading only. The facts are: one vhost logs, the one window read
+   was 42 lines over 510.40 seconds, and no access log is configured for the perspicuity vhosts.
+   Correct any figure that disagrees, and say so.
+3. Write the gate entry in this section: the gate, with `Decided by` and `Reconsider if`; the
+   reason, from the checked facts; what lifts the gate; and the parent's Q5 as this record's Q6,
+   with David as owner and a review trigger tied to R8.
+4. Point Current position, the open-questions table and the decision index at the entry, and add
+   the change entry.
+5. Run `make records` and `make ci`. Commit this file alone with the batch trailers. Return the
+   commit to the batch orchestrator.
+
+How the route serves the intent: this record already owes R8, a week of log that nobody was
+touching. Putting the gate and its lift condition beside that obligation brings the choice back to
+David when the evidence that tests it exists, rather than when someone remembers it.
+
+What shows it is done: the gate entry is in this record at a commit and names what is withheld,
+why, and what lifts it. Q6 is in the open-questions table with David as owner and a trigger. Both
+checks exit 0.
+
 ### Out of scope
 
 | Not covered | Reason |
@@ -679,6 +757,17 @@ from evidence of later benefit, and neither is inferred from the other.
 is a fallback date for an event whose real trigger is the principal pulling a longer extract.
 
 ## Changes
+
+**Revision 10**, 2026-09-22T20:38:10-06:00 (2026-09-23T02:38:10Z). Opens increment 2 for unit U6
+of the Perspicuity record `tools-as-skills-2026-09-22` and registers its claim and pickup plan
+before the gate entry. Added: the U6 section in Act, with Grant U6 as David ratified it, the unit's
+state, Fen's claim and the pickup plan. Changed: `work_status` from `accepted` to `active` for
+increment 2, with increment 1's acceptance kept; Current position names both increments, the
+claim, the inherited decision and Grant U6 as authority; `Next` moves to Fen, and R8's line becomes
+`Also pending`; `skill_version` moves to 0.6.0, the version used for this update. Earlier
+revisions were written under 0.5.0 and are read as written. Source: Grant U6, ratified by David at
+2026-09-23T02:32:38Z. Reason: the claim and route are registered before the work that depends on
+them. Affects: U6 and the record's next-action lines. R8 and the W1–W4 acceptance are unchanged.
 
 **Revision 9**, 2026-09-21T13:30:00-06:00. Records two decisions of the principal and closes the
 one finding they settle. R9 — the two Find My Next Bite 404s — moves from "handed to David" to
